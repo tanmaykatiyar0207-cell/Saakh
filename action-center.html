@@ -388,7 +388,102 @@
       background: #1E40AF;
       box-shadow: 0 4px 14px rgba(29,78,216,0.30);
     }
-  </style>
+  
+    /* -- ACTION CENTER CHAT UI -------------------------- */
+    .chat-input-zone {
+      background: #fff;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 32px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    .chat-input-zone textarea {
+      width: 100%;
+      border: none;
+      resize: none;
+      outline: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      color: #0F172A;
+      min-height: 80px;
+    }
+    .chat-input-zone textarea::placeholder {
+      color: #94A3B8;
+    }
+    .chat-input-zone .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: #059669;
+      color: #fff;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+    .chat-input-zone .btn-primary:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+    .loading-skeleton {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+    .skeleton-card {
+      height: 200px;
+      background: linear-gradient(90deg, #F1F5F9 25%, #E2E8F0 50%, #F1F5F9 75%);
+      background-size: 200% 100%;
+      animation: skeleton-loading 1.5s infinite;
+      border-radius: 16px;
+    }
+    @keyframes skeleton-loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    @keyframes cardFadeIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .ac-spinner {
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .ac-error-banner {
+      background: #FEF2F2;
+      border: 1px solid #FECACA;
+      color: #DC2626;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 13.5px;
+      font-weight: 500;
+      margin-bottom: 24px;
+    }
+    .ac-empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: #94A3B8;
+    }
+    .ac-empty-state svg { opacity: 0.4; margin-bottom: 12px; }
+    .ac-empty-state p { font-size: 14px; }
+    .home-btn {
+      font-size: 13px;
+      font-weight: 600;
+      color: #64748B;
+      text-decoration: none;
+      padding: 7px 14px;
+      border-radius: 8px;
+      border: 1px solid #E2E8F0;
+      background: #F8FAFC;
+      transition: all 0.15s;
+    }
+    .home-btn:hover { background: #ECFDF5; border-color: #A7F3D0; color: #047857; }
+</style>
 </head>
 <body>
 <div class="app-shell" style="display: none;">
@@ -452,7 +547,8 @@
     </div>
   </aside>
 
-  <!-- ══ MAIN ════════════════════════════════════════════ -->
+
+  <!-- == MAIN ================================================= -->
   <div class="main-area">
 
     <!-- Top Bar -->
@@ -480,105 +576,47 @@
     <!-- Page Content -->
     <div class="page-content">
 
-      <!-- ╔══ SECTION A — AI ACTION CENTER ══════════════╗ -->
-      <div class="section-eyebrow">Section A</div>
       <h1 class="section-heading">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
         AI Action Center
       </h1>
-      <p class="section-desc">Prioritized moves Gemma recommends today.</p>
+      <p class="section-desc">Tell Gemma what happened today � get prioritized actions for your business.</p>
 
-      <div class="cards-grid">
-
-        <!-- Card 1 — High Priority -->
-        <div class="acard">
-          <div class="acard-top">
-            <span class="badge badge-high">High Priority</span>
-            <button class="acard-menu">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-            </button>
-          </div>
-          <div class="acard-title">Collect ₹18,000 from Ravi Traders</div>
-          <div class="acard-desc">Overdue by 18 days</div>
-          <div class="acard-insight">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-            <span>Improves cash flow by ₹18,000</span>
-          </div>
-          <button class="acard-btn">Send Reminder</button>
+      <!-- Chat Input Zone -->
+      <div class="chat-input-zone">
+        <textarea
+          id="ac-input"
+          rows="4"
+          placeholder="e.g. Ravi owes me Rs.5000 from last week. I paid electricity Rs.1200 today. Only 5 packets of sugar left..."
+        ></textarea>
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-top:10px;">
+          <span style="font-size:12px; color:#94A3B8;">Tip: Ctrl+Enter to submit quickly</span>
+          <button id="ac-analyse-btn" class="btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+            Generate Actions
+          </button>
         </div>
-
-        <!-- Card 2 — Medium Priority -->
-        <div class="acard">
-          <div class="acard-top">
-            <span class="badge badge-medium">Medium Priority</span>
-            <button class="acard-menu">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-            </button>
-          </div>
-          <div class="acard-title">Delay inventory purchase</div>
-          <div class="acard-desc">Cash buffer is 12% below safe threshold</div>
-          <div class="acard-insight">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-            <span>Preserves ₹9,500 liquidity</span>
-          </div>
-          <button class="acard-btn">View Details</button>
-        </div>
-
-        <!-- Card 3 — Medium Priority -->
-        <div class="acard">
-          <div class="acard-top">
-            <span class="badge badge-medium">Medium Priority</span>
-            <button class="acard-menu">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-            </button>
-          </div>
-          <div class="acard-title">Restock cooking oil</div>
-          <div class="acard-desc">Stock will run out in 6 days at current sales rate</div>
-          <div class="acard-insight">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-            <span>Prevents ₹4,200 in lost sales</span>
-          </div>
-          <button class="acard-btn">Order Now</button>
-        </div>
-
-        <!-- Card 4 — High Priority -->
-        <div class="acard">
-          <div class="acard-top">
-            <span class="badge badge-high">High Priority</span>
-            <button class="acard-menu">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-            </button>
-          </div>
-          <div class="acard-title">Follow up on 3 unpaid invoices</div>
-          <div class="acard-desc">Combined ₹22,000 outstanding, 15+ days overdue</div>
-          <div class="acard-insight">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-            <span>Reduces receivables risk</span>
-          </div>
-          <button class="acard-btn">Send Reminders</button>
-        </div>
-
-        <!-- Card 5 — Low Priority -->
-        <div class="acard">
-          <div class="acard-top">
-            <span class="badge badge-low">Low Priority</span>
-            <button class="acard-menu">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-            </button>
-          </div>
-          <div class="acard-title">Festival sales expected next week</div>
-          <div class="acard-desc">Historical pattern shows 40% demand spike</div>
-          <div class="acard-insight">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-            <span>Opportunity to increase revenue</span>
-          </div>
-          <button class="acard-btn">Prepare Stock</button>
-        </div>
-
       </div>
-      <!-- ╚══ END SECTION A ═══════════════════════════════╝ -->
 
-    </div>
+      <!-- Error Banner (hidden by default) -->
+      <p id="ac-error" class="ac-error-banner" hidden></p>
+
+      <!-- Loading Skeleton -->
+      <div id="ac-skeleton" class="loading-skeleton" style="display:none;">
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+      </div>
+
+      <!-- Empty State -->
+      <div id="ac-empty" class="ac-empty-state">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+        <p>Your AI-generated action cards will appear here.<br/>Type your daily notes above and click <strong>Generate Actions</strong>.</p>
+      </div>
+
+      <!-- Dynamic Cards Grid (populated by action-center.js) -->
+      <div id="ac-cards-grid" class="cards-grid" style="display:none;"></div>
+
     </div>
   </div>
 </div>
@@ -586,6 +624,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js?v=9"></script>
 <script src="auth.js?v=10"></script>
+<script src="gemma-config.js"></script>
+<script src="gemma.js"></script>
+<script src="action-center.js"></script>
 <script>
   function checkAuth() {
     if (!window.saakhAuthInitialized) return;
@@ -606,32 +647,18 @@
   }
 
   window.addEventListener('saakh-auth-changed', () => {
-    if (window.saakhAuthInitialized) {
-      checkAuth();
-    }
+    if (window.saakhAuthInitialized) { checkAuth(); }
   });
-
 
   function updateDashboardUserUI(user) {
     const userNames = document.querySelectorAll('.user-name');
     const userAvatars = document.querySelectorAll('.avatar');
-    const bizNames = document.querySelectorAll('.topbar-biz-name, .header-title-lg');
-    
+    const bizNames = document.querySelectorAll('.topbar-biz-name');
     const shopName = user.user_metadata?.shop_name || 'My Business';
     const email = user.email || 'User';
-    
-    bizNames.forEach(el => {
-      el.textContent = shopName;
-    });
-    
-    userNames.forEach(el => {
-      el.textContent = shopName;
-    });
-    
-    userAvatars.forEach(el => {
-      const initial = (shopName || email).charAt(0).toUpperCase();
-      el.textContent = initial;
-    });
+    bizNames.forEach(el => { el.textContent = shopName; });
+    userNames.forEach(el => { el.textContent = shopName; });
+    userAvatars.forEach(el => { el.textContent = (shopName || email).charAt(0).toUpperCase(); });
   }
 </script>
 </body>

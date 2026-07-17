@@ -436,8 +436,73 @@ Rules:
     return profile;
   }
 
+
+  // ── ACTION CENTER: Chat-to-Action ──────────────────────────────
+  // Takes raw business notes typed by the user and returns a
+  // structured array of AI-generated action cards.
+  const ACTION_CARDS_PROMPT = `You are Saakh, a financial advisor for small Indian businesses (kirana shops, street vendors, small traders).
+The business owner has shared their daily notes below.
+Analyze the notes and identify the most important financial actions they should take.
+
+Return ONLY valid JSON with this exact shape:
+{
+  "actions": [
+    {
+      "priority": "high",
+      "title": "Short action title",
+      "desc": "Brief description of why this action is needed",
+      "insight": "Financial impact or benefit of taking this action",
+      "button": "Action label"
+    }
+  ]
+}
+
+Rules:
+- priority must be exactly "high", "medium", or "low"
+- Generate 2 to 5 actions based on what is mentioned in the notes
+- Focus on: pending collections (udhaar), inventory restocking, expense tracking, cash flow
+- Titles must be concise and start with a verb (e.g. "Collect ₹5,000 from Ravi")
+- insight must mention the financial impact (e.g. "Improves cash flow by ₹5,000")
+- button must be a short call-to-action (e.g. "Send Reminder", "Order Now", "Log Expense", "Review")
+- If amounts are mentioned, include them in titles and insights
+- If there are no actionable items, return: { "actions": [] }
+- Do not invent information not present in the notes`;
+
+  async function generateActionCards(inputText) {
+    const cfg = getConfig();
+    const url = `${cfg.endpointBase}/${cfg.model}:generateContent?key=${encodeURIComponent(cfg.apiKey)}`;
+
+    const prompt = ACTION_CARDS_PROMPT + '\n\nBusiness owner notes:\n"""\n' + inputText + '\n"""';
+
+    const body = {
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      generationConfig: {
+        temperature: 0.3,
+        maxOutputTokens: 2048,
+        responseMimeType: 'application/json',
+      },
+    };
+
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    const payload = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const msg = payload?.error?.message || `Gemma request failed (${res.status}). Check your API key.`;
+      throw new Error(msg);
+    }
+
+    const parsed = parseJsonLoose(extractModelText(payload));
+    const actions = Array.isArray(parsed.actions) ? parsed.actions : [];
+    return actions;
+  }
+
   global.SaakhGemma = {
     analyzeDocument,
+    generateActionCards,
     formatInr,
   };
 })(window);
