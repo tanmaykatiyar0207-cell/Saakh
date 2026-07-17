@@ -500,9 +500,67 @@ Rules:
     return actions;
   }
 
+  // ── EXPORT PAGE: Parse time-frame from plain chat ──────────────
+  // Takes a user's plain-text request like "Export July 2026" or
+  // "last 3 months" and returns structured date range JSON.
+  async function parseExportQuery(userQuery) {
+    const cfg = getConfig();
+    const url = `${cfg.endpointBase}/${cfg.model}:generateContent?key=${encodeURIComponent(cfg.apiKey)}`;
+
+    const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+
+    const prompt = `You are a date parser for Saakh, an Indian small business finance app.
+Today's date is: ${today}
+
+The user wants to export a financial report. Extract the time period from their request.
+
+User request: "${userQuery}"
+
+Return ONLY valid JSON with this exact shape:
+{
+  "periodLabel": "Human-readable label e.g. July 2026, Last 3 Months, Q1 2026",
+  "startDate": "YYYY-MM-DD",
+  "endDate": "YYYY-MM-DD",
+  "confidence": "high|medium|low"
+}
+
+Rules:
+- Always return valid ISO dates (YYYY-MM-DD format)
+- For "last month" use the previous full calendar month
+- For "last 3 months" go back 3 full months from today
+- For "this month" use the current month's start and today
+- For a specific month name like "July 2026" use the full month start/end
+- For "all time" or "everything" use startDate "2020-01-01" and endDate today
+- confidence: "high" if month/year clearly stated, "medium" if inferred, "low" if very vague`;
+
+    const body = {
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      generationConfig: {
+        temperature: 0.1,
+        maxOutputTokens: 512,
+        responseMimeType: 'application/json',
+      },
+    };
+
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    const payload = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const msg = payload?.error?.message || `Gemma request failed (${res.status}). Check your API key.`;
+      throw new Error(msg);
+    }
+
+    return parseJsonLoose(extractModelText(payload));
+  }
+
   global.SaakhGemma = {
     analyzeDocument,
     generateActionCards,
+    parseExportQuery,
     formatInr,
   };
 })(window);
