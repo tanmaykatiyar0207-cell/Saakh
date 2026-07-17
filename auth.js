@@ -132,6 +132,9 @@ async function restoreSession() {
 
   supabaseClient.auth.onAuthStateChange((_event, session) => {
     updateAuthState(session?.user ?? null);
+    if (session?.user && (window.location.pathname.endsWith('index.html') || window.location.pathname === '/')) {
+      window.location.href = 'dashboard.html';
+    }
   });
 }
 
