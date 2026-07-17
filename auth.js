@@ -267,9 +267,8 @@ if (authForm) {
         });
         if (error) throw error;
 
-        const afterAuth = window.authCallbackOnSuccess;
-
         if (data.session?.user) {
+          const afterAuth = window.authCallbackOnSuccess;
           updateAuthState(data.session.user);
           window.closeAuthModal();
           notifyUser('Account created — you are signed in.', 'success');
@@ -282,8 +281,9 @@ if (authForm) {
             }, 800);
           }
         } else {
+          // Email confirmation is required by Supabase project settings
           window.closeAuthModal();
-          notifyUser('Account created. Check your email to confirm, then sign in.', 'info');
+          notifyUser('Account created! Please check your email to verify your account before logging in.', 'success');
         }
       } else {
         const { data, error } = await supabase.auth.signInWithPassword({
