@@ -151,7 +151,7 @@ window.openAuthModal = function(signUp = false, callback = null) {
   if (isSignUpMode) {
     if (authTitle) authTitle.textContent = 'Create your Saakh Account';
     if (authDesc) authDesc.textContent =
-      'Save this credit profile so you can re-download your statement later.';
+      'Save your financial profile so you can re-download your statement later.';
     if (authSubmitBtn) authSubmitBtn.textContent = 'Register Account';
     if (authSwitchText) authSwitchText.textContent = 'Already have an account?';
     if (authSwitchBtn) authSwitchBtn.textContent = 'Sign In';
@@ -161,7 +161,7 @@ window.openAuthModal = function(signUp = false, callback = null) {
   } else {
     if (authTitle) authTitle.textContent = 'Sign In to Saakh';
     if (authDesc) authDesc.textContent =
-      'Sign in to reopen a saved credit profile and download your statement again.';
+      'Sign in to reopen a saved profile and download your statement again.';
     if (authSubmitBtn) authSubmitBtn.textContent = 'Continue';
     if (authSwitchText) authSwitchText.textContent = 'New to Saakh?';
     if (authSwitchBtn) authSwitchBtn.textContent = 'Create an account';
@@ -190,14 +190,12 @@ window.closeAuthModal = function() {
 if (navLoginBtn) {
   navLoginBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    alert('DEBUG: Sign In button was clicked! The modal should appear immediately after this alert.');
     window.openAuthModal(false);
   });
 }
 if (navRegisterBtn) {
   navRegisterBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    alert('DEBUG: Sign Up button was clicked! The modal should appear immediately after this alert.');
     window.openAuthModal(true);
   });
 }
