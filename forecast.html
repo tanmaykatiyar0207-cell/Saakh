@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Forecast — Saakh Cashflow Copilot</title>
+  <meta name="description" content="30-day AI cashflow forecast, stress-test simulator, and inventory restock predictions for your business." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=7" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #F8FAFC; font-family: 'Inter', sans-serif; color: #0F172A; }
+    .app-shell { display: flex; min-height: 100vh; }
+
+    /* ── Sidebar ─────────────────────────────────────────────── */
+    .sidebar { width: 240px; flex-shrink: 0; background: #fff; border-right: 1px solid #E2E8F0; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+    .sidebar-brand { padding: 22px 20px 18px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #F1F5F9; text-decoration: none; color: inherit; }
+    .sidebar-nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 2px; }
+    .nav-item { display: flex; align-items: center; gap: 11px; padding: 10px 12px; border-radius: 8px; font-size: 13.5px; font-weight: 500; color: #64748B; text-decoration: none; transition: all 0.18s ease; position: relative; cursor: pointer; }
+    .nav-item:hover { background: #F8FAFC; color: #0F172A; }
+    .nav-item.active { background: #ECFDF5; color: #047857; font-weight: 600; }
+    .nav-item.active::after { content: ""; position: absolute; right: 10px; width: 6px; height: 6px; background: #059669; border-radius: 50%; }
+    .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .sidebar-footer { padding: 16px 20px; border-top: 1px solid #F1F5F9; }
+    .gemma-badge { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600; color: #059669; margin-bottom: 4px; }
+    .gemma-badge svg { width: 13px; height: 13px; }
+    .sidebar-footer p { font-size: 11px; color: #94A3B8; line-height: 1.4; }
+
+    /* ── Main area ───────────────────────────────────────────── */
+    .main-area { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .topbar { height: 64px; background: #fff; border-bottom: 1px solid #E2E8F0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; position: sticky; top: 0; z-index: 50; }
+    .topbar-biz-label { font-size: 11px; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.6px; }
+    .topbar-biz-name { font-size: 15px; font-weight: 700; color: #0F172A; margin-top: 1px; }
+    .topbar-right { display: flex; align-items: center; gap: 18px; }
+    .user-chip { display: flex; align-items: center; gap: 9px; padding: 5px 12px 5px 5px; border-radius: 30px; border: 1px solid #E2E8F0; background: #fff; }
+    .avatar { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #10B981, #047857); color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .user-name { font-size: 13px; font-weight: 600; color: #0F172A; }
+    .home-btn { font-size: 13px; font-weight: 600; color: #64748B; text-decoration: none; padding: 7px 14px; border-radius: 8px; border: 1px solid #E2E8F0; background: #F8FAFC; transition: all 0.15s; }
+    .home-btn:hover { background: #ECFDF5; border-color: #A7F3D0; color: #047857; }
+
+    /* ── Page layout ─────────────────────────────────────────── */
+    .page-scroll { padding: 28px 28px 64px; overflow-y: auto; flex: 1; }
+    .page-header { margin-bottom: 24px; }
+    .page-eyebrow { font-size: 11px; font-weight: 700; color: #059669; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 5px; }
+    .page-title { display: flex; align-items: center; gap: 10px; font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; color: #0F172A; margin-bottom: 5px; }
+    .page-subtitle { font-size: 14px; color: #64748B; }
+
+    /* ── Sandbox Banner ──────────────────────────────────────── */
+    .sandbox-banner { display: none; flex-direction: column; align-items: center; text-align: center; padding: 40px 28px; background: linear-gradient(135deg, #FFFBEB, #FEF3C7); border: 1px solid #FDE68A; border-radius: 16px; margin-bottom: 24px; }
+    .sandbox-banner svg { color: #D97706; margin-bottom: 14px; }
+    .sandbox-banner h3 { font-size: 17px; font-weight: 700; color: #92400E; margin-bottom: 6px; }
+    .sandbox-banner p { font-size: 13.5px; color: #B45309; margin-bottom: 20px; max-width: 420px; }
+    .sandbox-btn { display: inline-flex; align-items: center; gap: 8px; background: #D97706; color: #fff; border: none; border-radius: 10px; padding: 12px 24px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.2s; }
+    .sandbox-btn:hover { background: #B45309; }
+
+    /* ── Loading overlay ─────────────────────────────────────── */
+    .loading-overlay { display: none; position: fixed; inset: 0; background: rgba(248,250,252,0.85); backdrop-filter: blur(4px); z-index: 200; align-items: center; justify-content: center; flex-direction: column; gap: 16px; }
+    .loading-spinner { width: 44px; height: 44px; border: 3px solid #E2E8F0; border-top-color: #10B981; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-title { font-size: 16px; font-weight: 700; color: #0F172A; }
+    .loading-status { font-size: 13px; color: #64748B; }
+
+    /* ── KPI row ─────────────────────────────────────────────── */
+    .kpi-row { display: grid; grid-template-columns: auto 1fr 1fr 1fr; gap: 14px; margin-bottom: 24px; align-items: stretch; }
+    .runway-card { background: linear-gradient(135deg, #059669, #047857); border-radius: 14px; padding: 20px 22px; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-width: 140px; }
+    .runway-badge { font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; color: #fff; line-height: 1; }
+    .runway-badge.warning { color: #FEF3C7; }
+    .runway-badge.danger { color: #FCA5A5; }
+    .runway-sub-label { font-size: 12px; color: rgba(255,255,255,0.75); font-weight: 500; }
+    .kpi-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px 18px; }
+    .kpi-label { font-size: 11.5px; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-bottom: 6px; }
+    .kpi-value { font-size: 20px; font-weight: 700; color: #0F172A; font-family: 'Space Grotesk', sans-serif; }
+
+    /* ── Chart card ──────────────────────────────────────────── */
+    .chart-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; padding: 20px 22px; margin-bottom: 24px; display: none; box-shadow: 0 4px 16px rgba(0,0,0,0.04); }
+    .chart-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .chart-card-title { font-size: 15px; font-weight: 700; color: #0F172A; display: flex; align-items: center; gap: 8px; }
+    .chart-card-sub { font-size: 12px; color: #94A3B8; margin-top: 2px; }
+    .chart-ai-badge { display: inline-flex; align-items: center; gap: 5px; background: #ECFDF5; border: 1px solid #A7F3D0; color: #047857; font-size: 11.5px; font-weight: 600; padding: 4px 10px; border-radius: 20px; }
+    .chart-wrapper { width: 100%; height: 260px; }
+    .chart-wrapper svg { width: 100%; height: 100%; }
+
+    /* ── Bottom grid ─────────────────────────────────────────── */
+    .bottom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+    /* ── Stress test panel ───────────────────────────────────── */
+    .panel-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; padding: 20px 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+    .panel-title { font-size: 14px; font-weight: 700; color: #0F172A; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .panel-title svg { color: #D97706; }
+    .stress-field { margin-bottom: 18px; }
+    .stress-label { font-size: 12px; font-weight: 600; color: #64748B; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
+    .stress-val { font-size: 14px; font-weight: 700; color: #64748B; }
+    .stress-slider { width: 100%; -webkit-appearance: none; height: 6px; border-radius: 3px; background: #E2E8F0; outline: none; }
+    .stress-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #059669; cursor: pointer; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(5,150,105,0.4); }
+    .stress-row { display: flex; gap: 8px; }
+    .stress-input { flex: 1; padding: 9px 12px; border: 1px solid #E2E8F0; border-radius: 8px; font-size: 14px; font-family: 'Inter', sans-serif; color: #0F172A; outline: none; }
+    .stress-input:focus { border-color: #A7F3D0; }
+    .stress-day-input { width: 72px; padding: 9px 10px; border: 1px solid #E2E8F0; border-radius: 8px; font-size: 14px; font-family: 'Inter', sans-serif; color: #0F172A; outline: none; text-align: center; }
+    .stress-actions { display: flex; gap: 8px; margin-top: 4px; }
+    .btn-apply { flex: 1; background: #0F172A; color: #fff; border: none; border-radius: 9px; padding: 10px 16px; font-size: 13.5px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.18s; }
+    .btn-apply:hover { background: #1E293B; }
+    .btn-reset { background: #F1F5F9; color: #64748B; border: none; border-radius: 9px; padding: 10px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.18s; }
+    .btn-reset:hover { background: #E2E8F0; }
+
+    /* ── Alerts (bills / restock / warnings) ─────────────────── */
+    .alerts-grid { display: flex; flex-direction: column; gap: 20px; }
+    .alert-item { display: flex; align-items: flex-start; gap: 10px; padding: 11px 13px; border-radius: 9px; background: #F8FAFC; border: 1px solid #F1F5F9; }
+    .alert-item.alert-danger { background: #FFF5F5; border-color: #FECACA; }
+    .alert-item.alert-warn { background: #FFFBEB; border-color: #FDE68A; }
+    .alert-item.alert-ok { background: #F0FDF4; border-color: #BBF7D0; }
+    .alert-icon { flex-shrink: 0; width: 28px; height: 28px; border-radius: 6px; background: rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: center; }
+    .alert-danger .alert-icon { background: #FEE2E2; color: #DC2626; }
+    .alert-warn .alert-icon { background: #FEF3C7; color: #D97706; }
+    .alert-ok .alert-icon { background: #D1FAE5; color: #059669; }
+    .alert-body { flex: 1; min-width: 0; }
+    .alert-title { font-size: 13px; font-weight: 600; color: #0F172A; }
+    .alert-sub { font-size: 11.5px; color: #64748B; margin-top: 2px; }
+    .alert-badge { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 20px; white-space: nowrap; }
+    .alert-danger .alert-badge { background: #FEE2E2; color: #DC2626; }
+    .alert-warn .alert-badge { background: #FEF3C7; color: #D97706; }
+    .alert-ok .alert-badge { background: #D1FAE5; color: #059669; }
+
+    /* Warnings */
+    .warning-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: 9px; background: #FFFBEB; border: 1px solid #FDE68A; margin-bottom: 6px; }
+    .warning-item svg { color: #D97706; flex-shrink: 0; margin-top: 1px; }
+    .warning-item.is-deficit { background: #FFF5F5; border-color: #FECACA; }
+    .warning-item.is-deficit svg { color: #DC2626; }
+    .warning-date { font-size: 11px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.5px; }
+    .warning-msg { font-size: 12.5px; color: #0F172A; margin-top: 1px; }
+    .no-warnings { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #059669; padding: 12px 0; }
+    .section-sub-title { font-size: 12.5px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; margin-top: 16px; }
+  </style>
+</head>
+<body>
+<div class="loading-overlay" id="fc-loading">
+  <div class="loading-spinner"></div>
+  <div class="loading-title">Gemma is forecasting...</div>
+  <p class="loading-status" id="fc-loading-status">Analysing your vault documents...</p>
+</div>
+
+<div class="app-shell" style="display:none;">
+
+  <!-- ── Sidebar ──────────────────────────────────────────────── -->
+  <aside class="sidebar">
+    <a href="index.html" class="sidebar-brand">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <rect x="2" y="2" width="24" height="24" rx="7" fill="url(#logoGradF)"/>
+        <path d="M9 14L12.5 17.5L19 10" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <defs><linearGradient id="logoGradF" x1="2" y1="2" x2="26" y2="26"><stop offset="0%" stop-color="#10B981"/><stop offset="100%" stop-color="#047857"/></linearGradient></defs>
+      </svg>
+      <span style="font-size:15px; font-weight:700; color:#0F172A;">Saakh</span>
+    </a>
+
+    <nav class="sidebar-nav">
+      <a href="index.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Home
+      </a>
+      <a href="dashboard.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Summary
+      </a>
+      <a href="upload-understand.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Upload & Understand
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        AI Copilot
+      </a>
+      <a href="forecast.html" class="nav-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Forecast
+      </a>
+      <a href="action-center.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+        Action Center
+      </a>
+      <a href="export.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export
+      </a>
+      <a href="#" class="nav-item" id="nav-logout-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="gemma-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+        Powered by Gemma
+      </div>
+      <p>On-device AI reading your ledgers privately.</p>
+    </div>
+  </aside>
+
+  <!-- ── Main ─────────────────────────────────────────────────── -->
+  <div class="main-area">
+    <header class="topbar">
+      <div>
+        <div class="topbar-biz-label">Forecast</div>
+        <div class="topbar-biz-name" id="fc-biz-name">AI Cashflow Copilot</div>
+      </div>
+      <div class="topbar-right">
+        <a href="index.html" class="home-btn">Home</a>
+        <div class="user-chip">
+          <div class="avatar" id="fc-avatar">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <span class="user-name" id="fc-user-name">Guest</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="page-scroll">
+      <div class="page-header">
+        <div class="page-eyebrow">AI-Powered</div>
+        <h1 class="page-title">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Cashflow Forecast
+        </h1>
+        <p class="page-subtitle">Gemma analyses your transaction history and projects 30 days ahead with recurring bill detection and inventory restock alerts.</p>
+      </div>
+
+      <!-- Sandbox Banner (shows when vault is empty) -->
+      <div class="sandbox-banner" id="fc-sandbox-banner">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <h3>No documents in your vault yet</h3>
+        <p>Upload ledger photos or UPI statements in <a href="upload-understand.html" style="color:#D97706; font-weight:700;">Upload & Understand</a> to see your real business forecast. Or load the sandbox demo to explore this feature now.</p>
+        <button class="sandbox-btn" id="fc-sandbox-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Load Kirana Sandbox Demo
+        </button>
+      </div>
+
+      <!-- KPI Row -->
+      <div class="kpi-row" id="fc-chart-container" style="display:none;">
+        <div class="runway-card">
+          <div style="font-size:11px; color:rgba(255,255,255,0.7); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Cash Runway</div>
+          <div class="runway-badge healthy" id="fc-runway-badge">30+ days</div>
+          <div class="runway-sub-label" id="fc-runway-label">Strong Runway</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Avg Daily Income</div>
+          <div class="kpi-value" id="fc-avg-income" style="color:#059669;">₹—</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Avg Daily Expense</div>
+          <div class="kpi-value" id="fc-avg-expense" style="color:#64748B;">₹—</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Projected Balance (Day 1)</div>
+          <div class="kpi-value" id="fc-balance">₹—</div>
+        </div>
+      </div>
+
+      <!-- Chart Card -->
+      <div class="chart-card" id="fc-chart-card" style="display:none;">
+        <div class="chart-card-header">
+          <div>
+            <div class="chart-card-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              30-Day AI Cash Projector
+            </div>
+            <div class="chart-card-sub">Green = Historical · Dotted Gold = AI Projection</div>
+          </div>
+          <div class="chart-ai-badge">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+            Gemma AI
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <svg id="fc-svg-chart" viewBox="0 0 700 260" preserveAspectRatio="none"></svg>
+        </div>
+      </div>
+
+      <!-- Bottom Grid: Stress Test + Alerts -->
+      <div class="bottom-grid" id="fc-bottom-grid" style="display:none;">
+
+        <!-- Stress Test Panel -->
+        <div class="panel-card">
+          <div class="panel-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>
+            Stress Test Simulator
+          </div>
+
+          <div class="stress-field">
+            <div class="stress-label">
+              Expected Sales Adjustment
+              <span class="stress-val" id="fc-stress-value">+0%</span>
+            </div>
+            <input type="range" class="stress-slider" id="fc-stress-slider" min="-50" max="50" value="0" step="5" />
+            <div style="display:flex; justify-content:space-between; font-size:11px; color:#94A3B8; margin-top:4px;">
+              <span>-50% (drought)</span><span>+50% (boom)</span>
+            </div>
+          </div>
+
+          <div class="stress-field">
+            <div class="stress-label">Add an upcoming expense</div>
+            <div class="stress-row">
+              <input type="number" class="stress-input" id="fc-stress-expense" placeholder="₹ Amount (e.g. 15000)" min="0" />
+              <input type="number" class="stress-day-input" id="fc-stress-day" placeholder="Day" value="15" min="1" max="30" />
+            </div>
+            <div style="font-size:11.5px; color:#94A3B8; margin-top:5px;">Enter the day (1–30) the expense will hit</div>
+          </div>
+
+          <div class="stress-actions">
+            <button class="btn-apply" id="fc-stress-apply">Apply Scenario</button>
+            <button class="btn-reset" id="fc-reset-stress">Reset</button>
+          </div>
+        </div>
+
+        <!-- Alerts Panel -->
+        <div class="panel-card">
+          <div class="panel-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Forecasted Alerts
+          </div>
+
+          <div class="alerts-grid">
+            <div>
+              <div class="section-sub-title">⚡ Upcoming Bills</div>
+              <div id="fc-bills-list"></div>
+            </div>
+            <div>
+              <div class="section-sub-title">📦 Restock Alerts</div>
+              <div id="fc-restock-list"></div>
+            </div>
+            <div>
+              <div class="section-sub-title">🚨 Cash Warnings</div>
+              <div id="fc-warnings-list"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js?v=9"></script>
+<script src="auth.js?v=11"></script>
+<script src="gemma-config.js"></script>
+<script src="gemma.js"></script>
+<script src="forecast.js"></script>
+<script>
+  function checkAuth() {
+    if (!window.saakhAuthInitialized) return;
+    const user = window.currentUser;
+    if (!user) {
+      window.location.href = 'index.html?triggerLogin=true';
+    } else {
+      updateUI(user);
+      document.querySelector('.app-shell').style.display = 'flex';
+    }
+  }
+  if (window.saakhAuthInitialized) checkAuth();
+  else window.addEventListener('saakh-auth-initialized', checkAuth);
+  window.addEventListener('saakh-auth-changed', () => { if (window.saakhAuthInitialized) checkAuth(); });
+
+  function updateUI(user) {
+    const name = user.user_metadata?.shop_name || 'My Business';
+    document.querySelectorAll('.user-name').forEach(e => e.textContent = name);
+    document.querySelectorAll('#fc-biz-name').forEach(e => e.textContent = name);
+    document.querySelectorAll('.avatar').forEach(e => e.textContent = name.charAt(0).toUpperCase());
+  }
+
+  // Show chart card and bottom grid when chart container becomes visible
+  const fcObs = new MutationObserver(() => {
+    const cc = document.getElementById('fc-chart-container');
+    if (cc && cc.style.display !== 'none') {
+      document.getElementById('fc-chart-card').style.display = 'block';
+      document.getElementById('fc-bottom-grid').style.display = 'grid';
+    }
+  });
+  fcObs.observe(document.getElementById('fc-chart-container'), { attributes: true, attributeFilter: ['style'] });
+</script>
+</body>
+</html>

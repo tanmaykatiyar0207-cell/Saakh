@@ -557,10 +557,95 @@ Rules:
     return parseJsonLoose(extractModelText(payload));
   }
 
+  // ── FORECAST: AI Cash Flow & Demand Projection ─────────────────
+  // Analyzes aggregated vault document data and returns a structured
+  // 30-day forward projection with recurring bills, restock alerts.
+  async function generateSaakhForecast(summaryData) {
+    const cfg = getConfig();
+    const url = `${cfg.endpointBase}/${cfg.model}:generateContent?key=${encodeURIComponent(cfg.apiKey)}`;
+
+    const today = new Date().toISOString().slice(0, 10);
+
+    const prompt = `You are a financial analyst for Saakh, an AI cashflow copilot for Indian small businesses (kirana shops, street vendors, traders).
+
+Today's date: ${today}
+
+Analyze the following aggregated business financial summary and generate a 30-day cashflow forecast.
+
+Business Summary:
+${JSON.stringify(summaryData, null, 2)}
+
+Based on this data, return ONLY valid JSON with this exact shape:
+{
+  "avgDailyIncome": number,
+  "avgDailyExpense": number,
+  "projectedRunwayDays": number,
+  "recurringBills": [
+    {
+      "name": "Rent",
+      "amount": 8000,
+      "dayOfMonth": 1,
+      "nextDueDate": "YYYY-MM-DD"
+    }
+  ],
+  "restockAlerts": [
+    {
+      "item": "Rice (50kg bags)",
+      "daysLeft": 4,
+      "restockBy": "YYYY-MM-DD",
+      "urgency": "high"
+    }
+  ],
+  "warnings": [
+    {
+      "day": 15,
+      "date": "YYYY-MM-DD",
+      "message": "Rent payment due - ensure Rs 8,000 is available",
+      "type": "bill"
+    }
+  ],
+  "forecast30Days": [150000, 148000, 152000]
+}
+
+Rules:
+- avgDailyIncome and avgDailyExpense must be realistic positive numbers in Indian Rupees
+- projectedRunwayDays: how many days until cash runs out at current burn rate
+- recurringBills: identify any rent, electricity, supplier, or subscription patterns (1-5 items)
+- restockAlerts: extract inventory items from descriptions and estimate days left (1-5 items)
+- warnings: flag days when cash may drop dangerously low, bill is due, or restock is urgent (1-5 items)
+- forecast30Days: array of EXACTLY 30 numbers representing projected daily cash balance for next 30 days starting tomorrow
+- forecast30Days values should reflect recurring bills hitting on their respective days
+- All amounts in Indian Rupees (numbers only, no symbols)`;
+
+    const body = {
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      generationConfig: {
+        temperature: 0.2,
+        maxOutputTokens: 2048,
+        responseMimeType: 'application/json',
+      },
+    };
+
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    const payload = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const msg = payload?.error?.message || `Gemma request failed (${res.status}). Check your API key.`;
+      throw new Error(msg);
+    }
+
+    return parseJsonLoose(extractModelText(payload));
+  }
+
   global.SaakhGemma = {
     analyzeDocument,
     generateActionCards,
     parseExportQuery,
+    generateSaakhForecast,
     formatInr,
   };
 })(window);
