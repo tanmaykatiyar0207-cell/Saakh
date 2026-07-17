@@ -718,6 +718,7 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => toast.remove(), 300);
     }, 3500);
   }
+  window.showToast = showToast;
 
   // ---------------------------------------------------------------
   // 13. HERO CARD FLOAT ANIMATION (CSS handles, but stagger init)

@@ -157,7 +157,6 @@ window.openAuthModal = function(signUp = false, callback = null) {
     if (authSwitchBtn) authSwitchBtn.textContent = 'Sign In';
     if (authPassInput) authPassInput.setAttribute('autocomplete', 'new-password');
     if (authShopGroup) authShopGroup.style.display = 'block';
-    if (authShopInput) authShopInput.required = true;
   } else {
     if (authTitle) authTitle.textContent = 'Sign In to Saakh';
     if (authDesc) authDesc.textContent =
@@ -167,7 +166,6 @@ window.openAuthModal = function(signUp = false, callback = null) {
     if (authSwitchBtn) authSwitchBtn.textContent = 'Create an account';
     if (authPassInput) authPassInput.setAttribute('autocomplete', 'current-password');
     if (authShopGroup) authShopGroup.style.display = 'none';
-    if (authShopInput) authShopInput.required = false;
   }
 
   if (authModal) {
@@ -225,7 +223,14 @@ if (authForm) {
     const password = authPassInput.value;
     const shopName = authShopInput ? authShopInput.value.trim() : '';
 
-    if (!email || !password) return;
+    if (!email) {
+        setAuthError('Email Address is required.');
+        return;
+    }
+    if (!password) {
+        setAuthError('Password is required.');
+        return;
+    }
     if (isSignUpMode && !shopName) {
         setAuthError('Store or Shop Name is required.');
         return;
