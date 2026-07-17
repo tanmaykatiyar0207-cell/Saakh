@@ -391,7 +391,7 @@
   </style>
 </head>
 <body>
-<div class="app-shell">
+<div class="app-shell" style="display: none;">
 
   <!-- ══ SIDEBAR ══════════════════════════════════════════ -->
   <aside class="sidebar">
@@ -436,6 +436,10 @@
       <a href="#" class="nav-item">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Export
+      </a>
+      <a href="#" class="nav-item" id="nav-logout-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
       </a>
     </nav>
 
@@ -575,7 +579,55 @@
       <!-- ╚══ END SECTION A ═══════════════════════════════╝ -->
 
     </div>
+    </div>
   </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="auth.js?v=4"></script>
+<script>
+  // Wait for auth check to finish
+  let authChecked = false;
+  window.addEventListener('saakh-auth-changed', (e) => {
+    authChecked = true;
+    const user = e.detail.user;
+    if (!user) {
+      window.location.href = 'index.html?triggerLogin=true';
+    } else {
+      updateDashboardUserUI(user);
+      const shell = document.querySelector('.app-shell');
+      if (shell) shell.style.display = 'flex';
+    }
+  });
+
+  setTimeout(() => {
+    if (!authChecked) {
+      window.location.href = 'index.html?triggerLogin=true';
+    }
+  }, 1500);
+
+  function updateDashboardUserUI(user) {
+    const userNames = document.querySelectorAll('.user-name');
+    const userAvatars = document.querySelectorAll('.avatar');
+    const bizNames = document.querySelectorAll('.topbar-biz-name, .header-title-lg');
+    
+    const shopName = user.user_metadata?.shop_name || 'My Business';
+    const email = user.email || 'User';
+    
+    bizNames.forEach(el => {
+      el.textContent = shopName;
+    });
+    
+    userNames.forEach(el => {
+      el.textContent = shopName;
+    });
+    
+    userAvatars.forEach(el => {
+      const initial = (shopName || email).charAt(0).toUpperCase();
+      el.textContent = initial;
+    });
+  }
+</script>
 </body>
 </html>

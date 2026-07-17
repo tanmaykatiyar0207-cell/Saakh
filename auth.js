@@ -308,3 +308,22 @@ if (navLogoutBtn) {
     notifyUser('Logged out successfully.', 'info');
   });
 }
+
+// Check query parameters to automatically open auth modal
+function checkQueryAuth() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('triggerLogin') === 'true') {
+    setTimeout(() => {
+      if (window.openAuthModal) {
+        window.openAuthModal(false);
+      }
+    }, 500);
+  }
+}
+try {
+  checkQueryAuth();
+} catch (err) {
+  console.error('[Saakh] checkQueryAuth error:', err);
+}
+
+
