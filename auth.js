@@ -5,7 +5,7 @@
 ================================================================ */
 
 window.currentUser = null;
-let supabase = null;
+let supabaseClient = null;
 
 const guestStateUI = document.getElementById('auth-guest-state');
 const userStateUI  = document.getElementById('auth-user-state');
@@ -63,10 +63,10 @@ function initSupabase() {
 }
 
 try {
-  supabase = initSupabase();
+  supabaseClient = initSupabase();
 } catch (err) {
   console.error('[Saakh] Failed to initialize Supabase:', err);
-  supabase = null;
+  supabaseClient = null;
 }
 
 function setAuthError(message) {
@@ -122,15 +122,15 @@ function updateAuthState(user) {
 }
 
 async function restoreSession() {
-  if (!supabase) return;
-  const { data, error } = await supabase.auth.getSession();
+  if (!supabaseClient) return;
+  const { data, error } = await supabaseClient.auth.getSession();
   if (error) {
     console.error('[Saakh] getSession error:', error.message);
     return;
   }
   updateAuthState(data.session?.user ?? null);
 
-  supabase.auth.onAuthStateChange((_event, session) => {
+  supabaseClient.auth.onAuthStateChange((_event, session) => {
     updateAuthState(session?.user ?? null);
   });
 }
@@ -236,7 +236,7 @@ if (authForm) {
         return;
     }
 
-    if (!supabase) {
+    if (!supabaseClient) {
       setAuthError(
         'Supabase is not configured. Add your project URL and anon key in supabase-config.js.'
       );
@@ -256,7 +256,7 @@ if (authForm) {
 
     try {
       if (isSignUpMode) {
-        const { data, error } = await supabase.auth.signUp({ 
+        const { data, error } = await supabaseClient.auth.signUp({ 
             email, 
             password,
             options: {
@@ -286,7 +286,7 @@ if (authForm) {
           notifyUser('Account created! Please check your email to verify your account before logging in.', 'success');
         }
       } else {
-        const { data, error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
           email,
           password,
         });
@@ -316,8 +316,8 @@ if (authForm) {
 
 if (navLogoutBtn) {
   navLogoutBtn.addEventListener('click', async () => {
-    if (supabase) {
-      const { error } = await supabase.auth.signOut();
+    if (supabaseClient) {
+      const { error } = await supabaseClient.auth.signOut();
       if (error) {
         notifyUser(error.message, 'error');
         return;
