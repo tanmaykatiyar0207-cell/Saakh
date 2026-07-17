@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateAnalyseButtonText() {
     if (!analyseBtnText) return;
     if (window.currentUser) {
-      analyseBtnText.textContent = 'Generate Credit Profile';
+      analyseBtnText.textContent = 'Generate Financial Profile';
     } else {
       analyseBtnText.textContent = 'Generate as Guest (1 Left)';
     }
@@ -385,8 +385,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const n = profile.extractedLineCount;
         showToast(
           n
-            ? `Gemma read ${n} line(s) and built your credit profile.`
-            : 'Gemma built your credit profile from the uploaded record.',
+            ? `Gemma read ${n} line(s) and built your financial profile.`
+            : 'Gemma built your financial profile from the uploaded record.',
           'success'
         );
       })
