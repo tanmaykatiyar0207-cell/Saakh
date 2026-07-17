@@ -243,6 +243,10 @@ a { text-decoration: none; color: inherit; }
   transition: transform 0.3s var(--ease-spring);
 }
 
+.nav-logo-text.sm {
+  font-size: 32px;
+}
+
 .nav-brand:hover .nav-logo-text {
   transform: scale(1.05);
 }
