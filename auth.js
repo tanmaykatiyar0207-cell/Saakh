@@ -122,13 +122,23 @@ function updateAuthState(user) {
 }
 
 async function restoreSession() {
-  if (!supabaseClient) return;
-  const { data, error } = await supabaseClient.auth.getSession();
-  if (error) {
-    console.error('[Saakh] getSession error:', error.message);
+  if (!supabaseClient) {
+    window.saakhAuthInitialized = true;
+    window.dispatchEvent(new CustomEvent('saakh-auth-initialized'));
     return;
   }
-  updateAuthState(data.session?.user ?? null);
+  try {
+    const { data, error } = await supabaseClient.auth.getSession();
+    if (error) {
+      console.error('[Saakh] getSession error:', error.message);
+    }
+    updateAuthState(data.session?.user ?? null);
+  } catch (err) {
+    console.error('[Saakh] restoreSession error:', err);
+  } finally {
+    window.saakhAuthInitialized = true;
+    window.dispatchEvent(new CustomEvent('saakh-auth-initialized'));
+  }
 
   supabaseClient.auth.onAuthStateChange((_event, session) => {
     updateAuthState(session?.user ?? null);
@@ -142,6 +152,8 @@ try {
   restoreSession();
 } catch (err) {
   console.error('[Saakh] Failed to restore session:', err);
+  window.saakhAuthInitialized = true;
+  window.dispatchEvent(new CustomEvent('saakh-auth-initialized'));
 }
 
 window.openAuthModal = function(signUp = false, callback = null) {

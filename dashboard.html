@@ -626,19 +626,29 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js?v=9"></script>
-<script src="auth.js?v=9"></script>
+<script src="auth.js?v=10"></script>
 <script>
-  // Wait for auth check to finish
-  let authChecked = false;
-  window.addEventListener('saakh-auth-changed', (e) => {
-    authChecked = true;
-    const user = e.detail.user;
+  function checkAuth() {
+    if (!window.saakhAuthInitialized) return;
+    const user = window.currentUser;
     if (!user) {
       window.location.href = 'index.html?triggerLogin=true';
     } else {
       updateDashboardUserUI(user);
       const shell = document.querySelector('.app-shell');
       if (shell) shell.style.display = 'flex';
+    }
+  }
+
+  if (window.saakhAuthInitialized) {
+    checkAuth();
+  } else {
+    window.addEventListener('saakh-auth-initialized', checkAuth);
+  }
+
+  window.addEventListener('saakh-auth-changed', () => {
+    if (window.saakhAuthInitialized) {
+      checkAuth();
     }
   });
 
