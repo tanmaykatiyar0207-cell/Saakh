@@ -269,6 +269,13 @@ if (authForm) {
           window.closeAuthModal();
           notifyUser('Account created — you are signed in.', 'success');
           if (afterAuth) afterAuth();
+          
+          // Redirect to dashboard if not already on it
+          if (!window.location.pathname.includes('dashboard.html') && !window.location.pathname.includes('action-center.html')) {
+            setTimeout(() => {
+              window.location.href = 'dashboard.html';
+            }, 800);
+          }
         } else {
           window.closeAuthModal();
           notifyUser('Account created. Check your email to confirm, then sign in.', 'info');
@@ -285,6 +292,13 @@ if (authForm) {
         window.closeAuthModal();
         notifyUser('Signed in successfully!', 'success');
         if (afterAuth) afterAuth();
+
+        // Redirect to dashboard if not already on it
+        if (!window.location.pathname.includes('dashboard.html') && !window.location.pathname.includes('action-center.html')) {
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 800);
+        }
       }
     } catch (err) {
       setAuthError(err.message || 'Authentication failed. Please try again.');
@@ -314,10 +328,12 @@ function checkQueryAuth() {
   const params = new URLSearchParams(window.location.search);
   if (params.get('triggerLogin') === 'true') {
     setTimeout(() => {
-      if (window.openAuthModal) {
+      if (window.currentUser) {
+        window.location.href = 'dashboard.html';
+      } else if (window.openAuthModal) {
         window.openAuthModal(false);
       }
-    }, 500);
+    }, 800);
   }
 }
 try {
