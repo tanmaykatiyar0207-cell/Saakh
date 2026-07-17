@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SDG Alignment — Saakh</title>
+  <meta name="description" content="How Saakh aligns with the United Nations Sustainable Development Goals to drive financial inclusion." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Great+Vibes&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <nav class="nav" id="main-nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-brand">
+        <svg class="logo-icon" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="2" width="24" height="24" rx="7" fill="url(#logoIconGrad)" />
+          <path d="M9 14L12.5 17.5L19 10" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+          <defs>
+            <linearGradient id="logoIconGrad" x1="2" y1="2" x2="26" y2="26">
+              <stop offset="0%" stop-color="#10B981"/>
+              <stop offset="100%" stop-color="#047857"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="nav-logo-text">Saakh</span>
+      </a>
+
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="dashboard.html" class="nav-link">Credit Profile</a>
+        <a href="index.html#how-it-works" class="nav-link">How it works</a>
+        <a href="index.html#tool" class="nav-link">Generate</a>
+        <a href="sdg.html" class="nav-link">SDG Alignment</a>
+      </div>
+
+      <div class="nav-actions">
+        <!-- Auth Guest State Buttons -->
+        <div id="auth-guest-state" class="auth-buttons-group">
+          <button class="btn-login-link" id="nav-login-btn">Sign In</button>
+          <button class="btn-nav-cta" id="nav-register-btn">Sign Up</button>
+        </div>
+        <!-- Auth Logged-In State profile (hidden by default) -->
+        <div id="auth-user-state" class="auth-user-profile" style="display: none;">
+          <span class="user-email-tag" id="user-display-email">Signed in</span>
+          <button class="btn-logout" id="nav-logout-btn">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 3H13C13.5523 3 14 3.44772 14 4V12C14 12.5523 13.5523 13 13 13H9"/>
+              <path d="M6 11L9 8L6 5"/>
+              <path d="M9 8H2"/>
+            </svg>
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- SDG HERO HEADER -->
+  <section class="hero sdg-hero" style="min-height: 55vh; padding-top: 140px; padding-bottom: 60px;">
+    <div class="hero-bg-pattern"></div>
+    <div class="section-container" style="position: relative; z-index: 1;">
+      <div class="section-eyebrow" style="text-align: left;">Global Impact</div>
+      <h1 class="section-title" style="text-align: left; font-size: clamp(32px, 5vw, 56px); margin-bottom: 24px; max-width: 820px;">
+        Aligning Financial Inclusion with Sustainable Development
+      </h1>
+      <p class="section-subtitle" style="text-align: left; max-width: 680px; margin-bottom: 20px; font-size: 18px;">
+        Saakh empowers informal merchants and micro-entrepreneurs. By bridging the informal economy and formal banking, we support the UN Sustainable Development Goals.
+      </p>
+    </div>
+  </section>
+
+  <!-- SDG CARDS SECTION -->
+  <section class="how-it-works" style="background: var(--bg-page); border-top: none; padding: 60px 0 100px;">
+    <div class="section-container">
+      <div class="steps-grid" style="display: flex; flex-direction: column; gap: 32px; align-items: stretch;">
+        
+        <!-- SDG 8 -->
+        <div class="step-card" style="display: flex; gap: 32px; flex-direction: row; align-items: flex-start; text-align: left; padding: 40px; box-shadow: var(--shadow-sm);">
+          <div style="flex-shrink: 0; background: #A21CAF; color: #FFF; width: 70px; height: 70px; border-radius: var(--r-sm); display: flex; align-items: center; justify-content: center; font-family: var(--font-ui); font-size: 28px; font-weight: 700; box-shadow: 0 8px 24px rgba(162, 28, 175, 0.2);">
+            8
+          </div>
+          <div>
+            <div class="step-number" style="color: #A21CAF; margin-bottom: 8px;">SDG 8: Decent Work &amp; Economic Growth</div>
+            <h3 class="step-title" style="font-family: var(--font-display); font-size: 22px; color: var(--text-primary); margin-bottom: 12px; font-weight: 700;">
+              Promoting Formalization and Credit Access for MSMEs
+            </h3>
+            <p style="color: var(--text-secondary); line-height: 1.7; font-size: 15px;">
+              Over 90% of India's workforce is informal, locking roadside vendors out of institutional loans. Saakh allows fruits and vegetable sellers, kiranas, and tea shops to extract credit credentials directly from their everyday cash logs (like UPI receipts &amp; registers), directly helping formalize and grow micro-enterprises (Target 8.3).
+            </p>
+          </div>
+        </div>
+
+        <!-- SDG 9 -->
+        <div class="step-card" style="display: flex; gap: 32px; flex-direction: row; align-items: flex-start; text-align: left; padding: 40px; box-shadow: var(--shadow-sm);">
+          <div style="flex-shrink: 0; background: #F97316; color: #FFF; width: 70px; height: 70px; border-radius: var(--r-sm); display: flex; align-items: center; justify-content: center; font-family: var(--font-ui); font-size: 28px; font-weight: 700; box-shadow: 0 8px 24px rgba(249, 115, 22, 0.25);">
+            9
+          </div>
+          <div>
+            <div class="step-number" style="color: #F97316; margin-bottom: 8px;">SDG 9: Industry, Innovation &amp; Infrastructure</div>
+            <h3 class="step-title" style="font-family: var(--font-display); font-size: 22px; color: var(--text-primary); margin-bottom: 12px; font-weight: 700;">
+              Integrating Small-Scale Enterprises into Value Chains
+            </h3>
+            <p style="color: var(--text-secondary); line-height: 1.7; font-size: 15px;">
+              Target 9.3 prioritizes expanding access to financial services and credit for small-scale enterprises. Saakh uses AI-driven parsing to clean unstructured transaction histories, transforming them into reliable credit markers. This lowers the lending risk for local microfinance institutions.
+            </p>
+          </div>
+        </div>
+
+        <!-- SDG 1 -->
+        <div class="step-card" style="display: flex; gap: 32px; flex-direction: row; align-items: flex-start; text-align: left; padding: 40px; box-shadow: var(--shadow-sm);">
+          <div style="flex-shrink: 0; background: #E11D48; color: #FFF; width: 70px; height: 70px; border-radius: var(--r-sm); display: flex; align-items: center; justify-content: center; font-family: var(--font-ui); font-size: 28px; font-weight: 700; box-shadow: 0 8px 24px rgba(225, 29, 72, 0.2);">
+            1
+          </div>
+          <div>
+            <div class="step-number" style="color: #E11D48; margin-bottom: 8px;">SDG 1: No Poverty</div>
+            <h3 class="step-title" style="font-family: var(--font-display); font-size: 22px; color: var(--text-primary); margin-bottom: 12px; font-weight: 700;">
+              Equal Access to Financial Services and Microfinance
+            </h3>
+            <p style="color: var(--text-secondary); line-height: 1.7; font-size: 15px;">
+              Eradicating poverty requires equal access to financial services and microfinance (Target 1.4). Underbanked entrepreneurs often depend on predatory local lenders with high interest rates. Saakh generates clean, audit-ready statements that help them leverage safe micro-loans.
+            </p>
+          </div>
+        </div>
+
+        <!-- SDG 10 -->
+        <div class="step-card" style="display: flex; gap: 32px; flex-direction: row; align-items: flex-start; text-align: left; padding: 40px; box-shadow: var(--shadow-sm);">
+          <div style="flex-shrink: 0; background: #DD127B; color: #FFF; width: 70px; height: 70px; border-radius: var(--r-sm); display: flex; align-items: center; justify-content: center; font-family: var(--font-ui); font-size: 28px; font-weight: 700; box-shadow: 0 8px 24px rgba(221, 18, 123, 0.2);">
+            10
+          </div>
+          <div>
+            <div class="step-number" style="color: #DD127B; margin-bottom: 8px;">SDG 10: Reduced Inequalities</div>
+            <h3 class="step-title" style="font-family: var(--font-display); font-size: 22px; color: var(--text-primary); margin-bottom: 12px; font-weight: 700;">
+              Democratizing Financial Visibility for the Underbanked
+            </h3>
+            <p style="color: var(--text-secondary); line-height: 1.7; font-size: 15px;">
+              We reduce systemic financial inequality by making the credit assessment bottom-up. No matter how small the business, a local merchant can translate everyday UPI logs into high-fidelity indicators of creditworthiness, ensuring equal opportunities for economic progress.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="section-container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <svg class="logo-icon" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="2" width="24" height="24" rx="7" fill="url(#logoIconGradFooter)" />
+            <path d="M9 14L12.5 17.5L19 10" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+            <defs>
+              <linearGradient id="logoIconGradFooter" x1="2" y1="2" x2="26" y2="26">
+                <stop offset="0%" stop-color="#10B981"/>
+                <stop offset="100%" stop-color="#047857"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <span class="footer-logo-text">Saakh</span>
+          <div>
+            <div class="footer-tagline-sm">Financial visibility for every business</div>
+          </div>
+        </div>
+        <div class="footer-note">
+          <a href="sdg.html" style="color: var(--gold-light); font-weight: 600; text-decoration: underline;">SDG Alignment Impact Report</a> &nbsp;·&nbsp;
+          <a href="dashboard.html" style="color: var(--gold-light); font-weight: 600; text-decoration: underline;">Credit Profile</a><br/>
+          Built with Gemma AI &nbsp;·&nbsp; Hackathon Project · 2025<br/>
+          <em>Saakh is not a certified financial advisor. Reports are AI-generated estimates.</em>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================================================
+       AUTH MODAL (Supabase mockup integration ready)
+  ============================================================ -->
+  <div class="auth-modal-backdrop" id="auth-modal" style="display: none;">
+    <div class="auth-modal-card">
+      <button class="auth-modal-close" id="auth-modal-close-btn">&times;</button>
+      <div class="auth-modal-header">
+        <h3 id="auth-modal-title">Sign In to Saakh</h3>
+        <p id="auth-modal-desc">Save this credit profile so you can re-download your statement later.</p>
+      </div>
+      <form class="auth-modal-form" id="auth-form" onsubmit="event.preventDefault();">
+        <div class="form-group" id="auth-shop-group" style="display: none;">
+          <label for="auth-shop-name">Store or Shop Name</label>
+          <input type="text" id="auth-shop-name" placeholder="e.g., Galaxy Electronics" />
+        </div>
+        <div class="form-group">
+          <label for="auth-email">Email Address</label>
+          <input type="email" id="auth-email" placeholder="owner@store.com" autocomplete="email" required />
+        </div>
+        <div class="form-group">
+          <label for="auth-password">Password</label>
+          <input type="password" id="auth-password" placeholder="••••••••" minlength="6" autocomplete="current-password" required />
+        </div>
+        <p class="auth-error" id="auth-error" role="alert" hidden></p>
+        <button type="submit" class="btn-primary auth-submit-btn" id="auth-submit-btn">
+          Continue
+        </button>
+      </form>
+      <div class="auth-modal-footer">
+        <span id="auth-switch-text">New to Saakh?</span>
+        <button class="auth-switch-btn" id="auth-switch-mode-btn">Create an account</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="auth.js"></script>
+
+</body>
+</html>
