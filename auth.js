@@ -258,8 +258,13 @@ if (authForm) {
     setAuthError('');
 
     try {
+      const withTimeout = (promise, ms) => Promise.race([
+        promise,
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Supabase API is not responding. You may have hit the Free Tier email rate limit. Please wait or disable "Confirm Email" in your Supabase Auth settings.')), ms))
+      ]);
+
       if (isSignUpMode) {
-        const { data, error } = await supabaseClient.auth.signUp({ 
+        const { data, error } = await withTimeout(supabaseClient.auth.signUp({ 
             email, 
             password,
             options: {
@@ -267,7 +272,7 @@ if (authForm) {
                     shop_name: shopName
                 }
             }
-        });
+        }), 8000);
         if (error) throw error;
 
         if (data.session?.user) {
@@ -289,10 +294,10 @@ if (authForm) {
           notifyUser('Account created! Please check your email to verify your account before logging in.', 'success');
         }
       } else {
-        const { data, error } = await supabaseClient.auth.signInWithPassword({
+        const { data, error } = await withTimeout(supabaseClient.auth.signInWithPassword({
           email,
           password,
-        });
+        }), 8000);
         if (error) throw error;
 
         const afterAuth = window.authCallbackOnSuccess;
@@ -349,5 +354,6 @@ try {
 } catch (err) {
   console.error('[Saakh] checkQueryAuth error:', err);
 }
+
 
 
