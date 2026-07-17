@@ -485,8 +485,8 @@
       };
 
       // 4. Export to PDF
-      if (window.SaakhExportPdf && window.SaakhExportPdf.exportToPdf) {
-        window.SaakhExportPdf.exportToPdf(consolidatedProfile);
+      if (window.SaakhExport && window.SaakhExport.downloadSaakhStatement) {
+        await window.SaakhExport.downloadSaakhStatement(consolidatedProfile);
       } else {
         throw new Error('PDF export library is missing. Please reload.');
       }
