@@ -604,7 +604,8 @@ Based on this data, return ONLY valid JSON with this exact shape:
       "type": "bill"
     }
   ],
-  "forecast30Days": [150000, 148000, 152000]
+  "forecast30Days": [150000, 148000, 152000],
+  "gemmaSuggestion": "Your cash runway is strong, but to optimize profits, prepare to purchase Maida in bulk before day 10. Follow up on catering payments early to avoid any weekend deficits."
 }
 
 Rules:

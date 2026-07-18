@@ -1,3 +1,4 @@
+console.log("FORECAST SCRIPT HELLO");
 /* ================================================================
    Saakh — AI Forecast Page Logic
    Cashflow Projector · Stress Test · Restock & Bills Forecast
@@ -46,6 +47,8 @@
   const stressExpDay     = document.getElementById('fc-stress-day');
   const stressApplyBtn   = document.getElementById('fc-stress-apply');
   const resetStressBtn   = document.getElementById('fc-reset-stress');
+  const suggestionCard   = document.getElementById('fc-suggestion-card');
+  const suggestionText   = document.getElementById('fc-suggestion-text');
 
   // ── SANDBOX DATA: realistic Kirana store ──────────────────────
   const SANDBOX_SUMMARY = {
@@ -74,21 +77,34 @@
       'sold 10kg sugar', 'transport to market', 'labour weekly payment',
     ],
     periodCovered: 'June–July 2026',
+    gemmaSuggestion: "Your counter sales are strong, but the bulk purchase of dal/rice on Day 5 will temporarily reduce your runway. Consider delaying the misc packaging purchase to Day 15 to maintain a healthier cash buffer.",
   };
 
+  let initialized = false;
+
   // ── Auth flow ─────────────────────────────────────────────────
-  window.addEventListener('saakh-auth-initialized', init);
   window.addEventListener('saakh-auth-changed', init);
 
+  if (window.saakhAuthInitialized) {
+    init();
+  } else {
+    window.addEventListener('saakh-auth-initialized', init);
+  }
+
   async function init() {
+    if (initialized) return;
     activeUser = window.currentUser;
+    console.log("forecast.js: Initializing for user:", activeUser?.id);
     if (!activeUser) return;
+    initialized = true;
     
     // Load documents list from LocalStorage synchronously first so UI updates immediately
     loadVaultDocs();
+    console.log("forecast.js: Vault documents loaded:", userDocuments.length);
     
     // Check if saakh_forecasts table exists in Supabase
     await checkDatabaseConnection();
+    console.log("forecast.js: Database connection checked. useLocalStorageOnly =", useLocalStorageOnly);
     
     // Load previously generated forecast
     await loadPreviousForecast();
@@ -128,24 +144,32 @@
     
     // Fetch from Supabase as well
     if (window.supabaseClient) {
+      console.log("forecast.js: Querying Supabase saakh_documents for user:", userId);
       window.supabaseClient
         .from('saakh_documents')
         .select('*')
         .eq('user_id', userId)
         .order('created_at', { ascending: false })
         .then(({ data, error }) => {
-          if (!error && data && data.length > 0) {
+          if (error) {
+            console.error("forecast.js: Supabase saakh_documents query error:", error);
+            return;
+          }
+          console.log("forecast.js: Supabase returned documents:", data ? data.length : 0);
+          if (data && data.length > 0) {
             userDocuments = data.map(row => ({
               id: row.id,
               fileName: row.file_name,
               fileType: row.file_type,
               uploadedAt: row.created_at,
-              extractedData: row.extracted_data
+              extractedData: typeof row.extracted_data === 'string' ? JSON.parse(row.extracted_data) : row.extracted_data
             }));
             updateUIVisibility();
           }
         })
-        .catch(() => {});
+        .catch((err) => {
+          console.error("forecast.js: Catch block error querying saakh_documents:", err);
+        });
     }
     updateUIVisibility();
   }
@@ -157,6 +181,7 @@
     // Try Supabase first if online
     if (!useLocalStorageOnly) {
       try {
+        console.log("forecast.js: Loading forecast from Supabase...");
         const { data, error } = await window.supabaseClient
           .from('saakh_forecasts')
           .select('*')
@@ -166,7 +191,8 @@
 
         if (!error && data && data.length > 0) {
           const row = data[0];
-          forecastData = row.forecast_data;
+          forecastData = typeof row.forecast_data === 'string' ? JSON.parse(row.forecast_data) : row.forecast_data;
+          console.log("forecast.js: Loaded forecast from Supabase:", JSON.stringify(forecastData));
           baseAvgIncome  = Number(forecastData.avgDailyIncome)  || 3000;
           baseAvgExpense = Number(forecastData.avgDailyExpense) || 2500;
           currentBalance = Number(forecastData.currentBalance)  || 30000;
@@ -175,6 +201,8 @@
           showForecastTimestamp(row.created_at);
           renderAll();
           return;
+        } else {
+          console.log("forecast.js: No forecast found in Supabase or error occurred. Error:", error);
         }
       } catch (err) {
         console.warn('[Saakh] Failed to load forecast from Supabase:', err);
@@ -256,6 +284,7 @@
       forecastNowBtn.style.display = 'none';
       timestampLabel.style.display = 'none';
       chartContainer.style.display = 'none';
+      if (suggestionCard) suggestionCard.style.display = 'none';
       return;
     }
 
@@ -266,9 +295,11 @@
     if (forecastData) {
       emptyBanner.style.display = 'none';
       chartContainer.style.display = 'grid'; // showing KPIs
+      if (suggestionCard) suggestionCard.style.display = 'block';
     } else {
       emptyBanner.style.display = 'flex';
       chartContainer.style.display = 'none';
+      if (suggestionCard) suggestionCard.style.display = 'none';
     }
   }
 
@@ -354,6 +385,12 @@
     renderBills();
     renderRestock();
     renderWarnings(proj);
+
+    // Render Gemma AI Cashflow Advice
+    if (suggestionText) {
+      suggestionText.textContent = forecastData.gemmaSuggestion || "Your cashflow is stable. Keep monitoring details.";
+    }
+
     updateUIVisibility();
   }
 

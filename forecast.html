@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -324,6 +324,15 @@
         </div>
       </div>
 
+      <!-- AI Suggestion Card -->
+      <div class="chart-card" id="fc-suggestion-card" style="display:none; margin-bottom: 24px; padding: 20px; background: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 16px;">
+        <div class="panel-title" style="color: #047857; font-weight: 700; display: flex; align-items: center; gap: 8px; font-size: 15px; font-family: 'Space Grotesk', sans-serif;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+          Gemma's Cashflow Advice
+        </div>
+        <p id="fc-suggestion-text" style="font-size: 13.5px; color: #065F46; line-height: 1.6; margin-top: 10px; font-weight: 500; font-family: 'Inter', sans-serif;"></p>
+      </div>
+
       <!-- Bottom Grid: Stress Test + Alerts -->
       <div class="bottom-grid" id="fc-bottom-grid" style="display:none;">
 
@@ -390,10 +399,10 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js?v=9"></script>
-<script src="auth.js?v=11"></script>
+<script src="auth.js?v=12"></script>
 <script src="gemma-config.js"></script>
 <script src="gemma.js?v=14"></script>
-<script src="forecast.js?v=13"></script>
+<script src="forecast.js?v=14"></script>
 <script>
   function checkAuth() {
     if (!window.saakhAuthInitialized) return;
@@ -416,13 +425,13 @@
     document.querySelectorAll('.avatar').forEach(e => e.textContent = name.charAt(0).toUpperCase());
   }
 
-  // Show chart card and bottom grid when chart container becomes visible
+  // Show chart card, suggestion card and bottom grid when chart container becomes visible
   const fcObs = new MutationObserver(() => {
     const cc = document.getElementById('fc-chart-container');
-    if (cc && cc.style.display !== 'none') {
-      document.getElementById('fc-chart-card').style.display = 'block';
-      document.getElementById('fc-bottom-grid').style.display = 'grid';
-    }
+    const hasForecast = cc && cc.style.display !== 'none';
+    document.getElementById('fc-chart-card').style.display = hasForecast ? 'block' : 'none';
+    document.getElementById('fc-suggestion-card').style.display = hasForecast ? 'block' : 'none';
+    document.getElementById('fc-bottom-grid').style.display = hasForecast ? 'grid' : 'none';
   });
   fcObs.observe(document.getElementById('fc-chart-container'), { attributes: true, attributeFilter: ['style'] });
 </script>
