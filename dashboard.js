@@ -64,7 +64,7 @@
       const rawForecast = localStorage.getItem('saakh_forecast_' + userId);
       if (rawVault) docs = JSON.parse(rawVault);
       if (rawForecast) forecast = JSON.parse(rawForecast);
-      if (docs.length > 0 || forecast) {
+      if (docs && docs.length > 0) {
         renderKPIs(docs, forecast);
         renderTopExpenses(docs);
         renderNeedsAttention(forecast);
@@ -75,18 +75,23 @@
     if (window.supabaseClient) {
       try {
         const { data, error } = await window.supabaseClient.from('saakh_documents').select('*').eq('user_id', userId);
+        if (error) throw error;
         if (data && data.length > 0) {
-          docs = data.map(r => {
+          const freshDocs = data.map(r => {
             let parsed = r.extracted_data;
             if (typeof parsed === 'string') {
               try { parsed = JSON.parse(parsed); } catch(e){}
             }
             return { extractedData: parsed };
           });
-          localStorage.setItem('saakh_vault_' + userId, JSON.stringify(docs));
+          // Only overwrite if we actually got valid mapped data
+          if (freshDocs.length > 0) {
+            docs = freshDocs;
+            localStorage.setItem('saakh_vault_' + userId, JSON.stringify(docs));
+          }
         }
       } catch (err) {
-        console.warn("Supabase fetch failed, keeping local storage");
+        console.warn("Supabase fetch failed, keeping local storage", err);
       }
     }
     
@@ -94,23 +99,28 @@
     if (window.supabaseClient) {
       try {
         const { data, error } = await window.supabaseClient.from('saakh_forecasts').select('*').eq('user_id', userId).order('created_at', { ascending: false }).limit(1);
+        if (error) throw error;
         if (data && data.length > 0) {
           let parsed = data[0].forecast_data;
           if (typeof parsed === 'string') {
             try { parsed = JSON.parse(parsed); } catch(e){}
           }
-          forecast = parsed;
-          localStorage.setItem('saakh_forecast_' + userId, JSON.stringify(forecast));
+          if (parsed) {
+            forecast = parsed;
+            localStorage.setItem('saakh_forecast_' + userId, JSON.stringify(forecast));
+          }
         }
       } catch (err) {
-        console.warn("Supabase forecast fetch failed");
+        console.warn("Supabase forecast fetch failed", err);
       }
     }
 
-    // 3. Re-render with fresh data
-    renderKPIs(docs, forecast);
-    renderTopExpenses(docs);
-    renderNeedsAttention(forecast);
+    // 3. Re-render with fresh data (guaranteed not to clear existing data)
+    if (docs && docs.length > 0) {
+      renderKPIs(docs, forecast);
+      renderTopExpenses(docs);
+      renderNeedsAttention(forecast);
+    }
   }
 
   // ── Emergency Seed Demo Data ──────────────────────────────────
