@@ -50,6 +50,35 @@
     });
   }
 
+  async function autoSeedDemoData(userId) {
+    if (!window.supabaseClient) return false;
+    try {
+      // Seed documents
+      await window.supabaseClient.from('saakh_documents').insert([
+        { user_id: userId, file_name: 'Flour_Sugar_Invoice_March.pdf', file_type: 'application/pdf', extracted_data: { netProfit: -1500, expenses: [{ label: 'Flour and Sugar bulk purchase', amount: 1500 }] } },
+        { user_id: userId, file_name: 'Daily_Sales_Report_March.csv', file_type: 'text/csv', extracted_data: { netProfit: 8000, income: [{ label: 'Daily counter sales', amount: 8000 }] } },
+        { user_id: userId, file_name: 'Electricity_Bill_March.pdf', file_type: 'application/pdf', extracted_data: { netProfit: -400, expenses: [{ label: 'Electricity Bill', amount: 400 }] } }
+      ]);
+      
+      // Seed forecast
+      await window.supabaseClient.from('saakh_forecasts').insert({
+        user_id: userId,
+        forecast_data: { avgDailyIncome: 4500, avgDailyExpense: 1200, currentBalance: 12500, projectedRunwayDays: 145, growthRate: 5.2, predictions: [{ date: '2026-07-18', predictedBalance: 12500 }] },
+        created_at: new Date().toISOString()
+      });
+
+      // Seed scores
+      await window.supabaseClient.from('saakh_scores').insert([
+        { user_id: userId, score: 650 }, { user_id: userId, score: 675 }, { user_id: userId, score: 710 }
+      ]);
+      console.log("Demo data auto-seeded successfully");
+      return true;
+    } catch (e) {
+      console.error("Error auto-seeding: ", e);
+      return false;
+    }
+  }
+
   // ── Data Loading & Calculation ─────────────────────────────────
   async function loadDashboardData() {
     const user = activeUser || window.currentUser;
@@ -74,8 +103,20 @@
     // 1. Fetch Fresh Vault Data from Supabase
     if (window.supabaseClient) {
       try {
-        const { data, error } = await window.supabaseClient.from('saakh_documents').select('*').eq('user_id', userId);
+        let { data, error } = await window.supabaseClient.from('saakh_documents').select('*').eq('user_id', userId);
         if (error) throw error;
+        
+        // AUTO-SEED: If there are no documents, automatically seed the data right now
+        if (!data || data.length === 0) {
+          console.log("No data found for user. Auto-seeding default demo data...");
+          const seeded = await autoSeedDemoData(userId);
+          if (seeded) {
+            // Re-fetch
+            const refetched = await window.supabaseClient.from('saakh_documents').select('*').eq('user_id', userId);
+            data = refetched.data;
+          }
+        }
+
         if (data && data.length > 0) {
           const freshDocs = data.map(r => {
             let parsed = r.extracted_data;
@@ -121,44 +162,6 @@
       renderTopExpenses(docs);
       renderNeedsAttention(forecast);
     }
-  }
-
-  // ── Emergency Seed Demo Data ──────────────────────────────────
-  const seedBtn = document.getElementById('emergency-seed-btn');
-  if (seedBtn) {
-    seedBtn.addEventListener('click', async () => {
-      const user = activeUser || window.currentUser;
-      if (!user) return alert("Please log in first!");
-      const userId = user.id;
-      seedBtn.textContent = "Seeding...";
-      seedBtn.disabled = true;
-      try {
-        // Seed documents
-        await window.supabaseClient.from('saakh_documents').insert([
-          { user_id: userId, file_name: 'Flour_Sugar_Invoice_March.pdf', file_type: 'application/pdf', extracted_data: { netProfit: -1500, expenses: [{ label: 'Flour and Sugar bulk purchase', amount: 1500 }] } },
-          { user_id: userId, file_name: 'Daily_Sales_Report_March.csv', file_type: 'text/csv', extracted_data: { netProfit: 8000, income: [{ label: 'Daily counter sales', amount: 8000 }] } },
-          { user_id: userId, file_name: 'Electricity_Bill_March.pdf', file_type: 'application/pdf', extracted_data: { netProfit: -400, expenses: [{ label: 'Electricity Bill', amount: 400 }] } }
-        ]);
-        
-        // Seed forecast
-        await window.supabaseClient.from('saakh_forecasts').insert({
-          user_id: userId,
-          forecast_data: { avgDailyIncome: 4500, avgDailyExpense: 1200, currentBalance: 12500, projectedRunwayDays: 145, growthRate: 5.2, predictions: [{ date: '2026-07-18', predictedBalance: 12500 }] },
-          created_at: new Date().toISOString()
-        });
-
-        // Seed scores
-        await window.supabaseClient.from('saakh_scores').insert([
-          { user_id: userId, score: 650 }, { user_id: userId, score: 675 }, { user_id: userId, score: 710 }
-        ]);
-        
-        alert("Success! Demo data seeded to your account. Reloading dashboard...");
-        window.location.reload();
-      } catch (e) {
-        alert("Error seeding data: " + e.message);
-        seedBtn.textContent = "Error";
-      }
-    });
   }
 
   // ── Render Helpers ────────────────────────────────────────────
