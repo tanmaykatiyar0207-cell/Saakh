@@ -397,6 +397,17 @@
 
     // Set Narrative insights
     narrativeContainer.innerHTML = '';
+    // Deduce fallback period from filename
+    let periodFallback = 'June 2026';
+    const fn = (doc.fileName || '').toLowerCase();
+    if (fn.includes('march')) {
+      periodFallback = 'March 2026';
+    } else if (fn.includes('june')) {
+      periodFallback = 'June 2026';
+    }
+
+    // Set Narrative insights
+    narrativeContainer.innerHTML = '';
     let narratives = Array.isArray(data.narrative) ? data.narrative : [];
     if (narratives.length === 0) {
       if (inflowVal > 0) {
@@ -411,9 +422,10 @@
           body: `Operational expenditures of Rs ${outflowVal.toLocaleString('en-IN')} were recorded. Proper tracking of these bills reduces supplier risk.`
         });
       }
+      const formattedNetProfit = netProfitVal < 0 ? `-Rs ${Math.abs(netProfitVal).toLocaleString('en-IN')}` : `Rs ${netProfitVal.toLocaleString('en-IN')}`;
       narratives.push({
         title: 'Credit Assessment',
-        body: `With a net surplus of Rs ${netProfitVal.toLocaleString('en-IN')}, the business demonstrates ${netProfitVal >= 0 ? 'positive surplus' : 'temporary deficit'} which helps lenders analyze repayment viability.`
+        body: `With a net surplus of ${formattedNetProfit}, the business demonstrates ${netProfitVal >= 0 ? 'positive surplus' : 'temporary deficit'} which helps lenders analyze repayment viability.`
       });
     }
 
@@ -436,16 +448,16 @@
       const exp = Array.isArray(data.expenses) ? data.expenses : [];
       inc.forEach(item => {
         rawLines.push({
-          date: data.period || 'June 2026',
-          description: item.label || 'Income',
+          date: data.period || periodFallback,
+          description: item.label || item.description || 'Income',
           direction: 'in',
           amount: typeof item.amount === 'number' ? item.amount : parseFloat(String(item.amount).replace(/[^\d.]/g, '')) || 0
         });
       });
       exp.forEach(item => {
         rawLines.push({
-          date: data.period || 'June 2026',
-          description: item.label || 'Expense',
+          date: data.period || periodFallback,
+          description: item.label || item.description || 'Expense',
           direction: 'out',
           amount: typeof item.amount === 'number' ? item.amount : parseFloat(String(item.amount).replace(/[^\d.]/g, '')) || 0
         });
