@@ -1,6 +1,7 @@
 /* ================================================================
-   Saakh � Action Center UI Logic
+   Saakh — Action Center UI Logic
    Handles the Chat-to-Action input -> Gemma -> dynamic card rendering
+   Syncs tasks to Supabase with local storage fallback.
 ================================================================ */
 
 (function () {
@@ -15,6 +16,9 @@
   const emptyState  = document.getElementById('ac-empty');
 
   if (!textarea || !analyseBtn) return;
+
+  let activeUser = null;
+  let localTasks = []; // Offline fallback
 
   // -- Helpers --
   function setLoading(on) {
@@ -49,15 +53,63 @@
     const card = document.createElement('div');
     card.className = 'acard';
     card.style.cssText = 'opacity:0; transform:translateY(12px); animation: cardFadeIn 0.4s ease forwards; animation-delay:' + (index * 80) + 'ms;';
+    
     card.innerHTML =
       '<div class="acard-top">' +
         '<span class="badge ' + badgeClass + '">' + label + '</span>' +
-        '<button class="acard-menu" title="Options">' + SETTINGS_ICON + '</button>' +
+        '<div style="position: relative;">' +
+          '<button class="acard-menu" title="Set Priority">' + SETTINGS_ICON + '</button>' +
+          '<div class="priority-dropdown" style="display:none; position:absolute; right:0; top:32px; background:#fff; border:1px solid #E2E8F0; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.1); z-index:10; padding:4px; min-width:120px;">' +
+            '<div class="dropdown-item" data-priority="high" style="padding:8px 10px; font-size:12px; font-weight:600; color:#DC2626; cursor:pointer; border-radius:6px; transition:background 0.15s; font-family:inherit;">High Priority</div>' +
+            '<div class="dropdown-item" data-priority="medium" style="padding:8px 10px; font-size:12px; font-weight:600; color:#D97706; cursor:pointer; border-radius:6px; transition:background 0.15s; font-family:inherit;">Medium Priority</div>' +
+            '<div class="dropdown-item" data-priority="low" style="padding:8px 10px; font-size:12px; font-weight:600; color:#64748B; cursor:pointer; border-radius:6px; transition:background 0.15s; font-family:inherit;">Low Priority</div>' +
+          '</div>' +
+        '</div>' +
       '</div>' +
       '<div class="acard-title">' + escapeHtml(action.title || 'Action') + '</div>' +
       '<div class="acard-desc">' + escapeHtml(action.desc || '') + '</div>' +
       '<div class="acard-insight">' + INSIGHT_ICON + '<span>' + escapeHtml(action.insight || 'Take action now') + '</span></div>' +
       '<button class="acard-btn">' + escapeHtml(action.button || 'Act Now') + '</button>';
+
+    // -- Attach Dropdown Event Handlers --
+    const menuBtn = card.querySelector('.acard-menu');
+    const dropdown = card.querySelector('.priority-dropdown');
+    
+    menuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // Close any other open dropdowns first
+      document.querySelectorAll('.priority-dropdown').forEach(d => {
+        if (d !== dropdown) d.style.display = 'none';
+      });
+      dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+    });
+
+    // Handle priority selection
+    const items = card.querySelectorAll('.dropdown-item');
+    items.forEach(item => {
+      item.addEventListener('mouseenter', () => { item.style.background = '#F1F5F9'; });
+      item.addEventListener('mouseleave', () => { item.style.background = ''; });
+      item.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        dropdown.style.display = 'none';
+        const newPriority = item.getAttribute('data-priority');
+        await updateTaskPriority(action.id, newPriority);
+      });
+    });
+
+    // Close dropdown on click outside
+    document.addEventListener('click', () => {
+      dropdown.style.display = 'none';
+    });
+
+    // -- Attach CTA click to complete task --
+    const ctaBtn = card.querySelector('.acard-btn');
+    ctaBtn.addEventListener('click', async () => {
+      ctaBtn.disabled = true;
+      ctaBtn.textContent = 'Completing...';
+      await completeTask(action.id);
+    });
+
     return card;
   }
 
@@ -72,9 +124,160 @@
     cardsGrid.style.display = 'grid';
   }
 
-  // -- Main handler --
+  // ── Database Operations ──────────────────────────────────────────
+  
+  async function loadTasks() {
+    const user = activeUser || window.currentUser;
+    if (!user) return;
+    const userId = user.id;
+
+    if (window.supabaseClient) {
+      try {
+        const { data, error } = await window.supabaseClient
+          .from('saakh_tasks')
+          .select('*')
+          .eq('user_id', userId)
+          .eq('completed', false)
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        
+        const actions = (data || []).map(row => ({
+          id: row.id,
+          title: row.title,
+          desc: row.description,
+          priority: row.priority,
+          insight: row.insight,
+          button: row.button_text
+        }));
+        localTasks = actions;
+        renderCards(actions);
+        return;
+      } catch (err) {
+        console.warn("Supabase load tasks failed, falling back to local storage", err);
+      }
+    }
+
+    // Local Storage Fallback
+    try {
+      const raw = localStorage.getItem('saakh_tasks_' + userId);
+      localTasks = raw ? JSON.parse(raw) : [];
+      renderCards(localTasks);
+    } catch (_) {}
+  }
+
+  async function syncLocalTasksToSupabase(userId) {
+    // Write local state to localStorage
+    localStorage.setItem('saakh_tasks_' + userId, JSON.stringify(localTasks));
+  }
+
+  async function saveNewTasks(newActions) {
+    const user = activeUser || window.currentUser;
+    if (!user) return;
+    const userId = user.id;
+
+    const formattedTasks = newActions.map(action => ({
+      user_id: userId,
+      title: action.title,
+      description: action.desc,
+      priority: (action.priority || 'low').toLowerCase(),
+      insight: action.insight,
+      button_text: action.button || 'Act Now',
+      completed: false
+    }));
+
+    if (window.supabaseClient) {
+      try {
+        const { data, error } = await window.supabaseClient
+          .from('saakh_tasks')
+          .insert(formattedTasks)
+          .select();
+
+        if (error) throw error;
+
+        // Refresh UI
+        await loadTasks();
+        return;
+      } catch (err) {
+        console.warn("Failed to sync new tasks to Supabase, saving locally", err);
+      }
+    }
+
+    // Local Storage Fallback
+    const localFormatted = formattedTasks.map((t, index) => ({
+      id: 'local_' + Date.now() + '_' + index,
+      title: t.title,
+      desc: t.description,
+      priority: t.priority,
+      insight: t.insight,
+      button: t.button_text
+    }));
+
+    localTasks = [...localFormatted, ...localTasks];
+    await syncLocalTasksToSupabase(userId);
+    renderCards(localTasks);
+  }
+
+  async function updateTaskPriority(taskId, newPriority) {
+    const user = activeUser || window.currentUser;
+    const userId = user ? user.id : '';
+
+    if (window.supabaseClient && !String(taskId).startsWith('local_')) {
+      try {
+        const { error } = await window.supabaseClient
+          .from('saakh_tasks')
+          .update({ priority: newPriority })
+          .eq('id', taskId);
+
+        if (error) throw error;
+        await loadTasks();
+        return;
+      } catch (err) {
+        console.warn("Failed to update task priority on Supabase", err);
+      }
+    }
+
+    // Local Storage update
+    localTasks = localTasks.map(t => {
+      if (t.id === taskId) {
+        t.priority = newPriority;
+      }
+      return t;
+    });
+    if (userId) await syncLocalTasksToSupabase(userId);
+    renderCards(localTasks);
+  }
+
+  async function completeTask(taskId) {
+    const user = activeUser || window.currentUser;
+    const userId = user ? user.id : '';
+
+    if (window.supabaseClient && !String(taskId).startsWith('local_')) {
+      try {
+        const { error } = await window.supabaseClient
+          .from('saakh_tasks')
+          .update({ completed: true })
+          .eq('id', taskId);
+
+        if (error) throw error;
+        await loadTasks();
+        return;
+      } catch (err) {
+        console.warn("Failed to complete task on Supabase", err);
+      }
+    }
+
+    // Local Storage complete
+    localTasks = localTasks.filter(t => t.id !== taskId);
+    if (userId) await syncLocalTasksToSupabase(userId);
+    renderCards(localTasks);
+  }
+
+  // ── Main handlers & initialization ───────────────────────────────
+
   analyseBtn.addEventListener('click', async function() {
     var text = textarea.value.trim();
+    console.log("action-center.js: Clicked Generate Actions. Input text:", text);
     if (!text) {
       textarea.focus();
       textarea.style.borderColor = '#DC2626';
@@ -87,9 +290,13 @@
     }
     try {
       setLoading(true);
+      console.log("action-center.js: Calling Gemma generateActionCards...");
       var actions = await window.SaakhGemma.generateActionCards(text);
-      renderCards(actions);
+      console.log("action-center.js: Gemma returned actions:", JSON.stringify(actions));
+      await saveNewTasks(actions);
+      textarea.value = ''; // Clear input on success
     } catch (err) {
+      console.error("action-center.js: Error in Generate Actions:", err);
       showError(err.message || 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
@@ -99,5 +306,19 @@
   textarea.addEventListener('keydown', function(e) {
     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { analyseBtn.click(); }
   });
+
+  async function init() {
+    activeUser = window.currentUser;
+    if (!activeUser) return;
+    await loadTasks();
+  }
+
+  window.addEventListener('saakh-auth-changed', init);
+
+  if (window.saakhAuthInitialized) {
+    init();
+  } else {
+    window.addEventListener('saakh-auth-initialized', init);
+  }
 
 })();

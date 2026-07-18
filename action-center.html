@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -483,6 +483,11 @@
       transition: all 0.15s;
     }
     .home-btn:hover { background: #ECFDF5; border-color: #A7F3D0; color: #047857; }
+    .rec-pill-btn:hover {
+      background: #ECFDF5 !important;
+      border-color: #A7F3D0 !important;
+      color: #047857 !important;
+    }
 </style>
 </head>
 <body>
@@ -626,6 +631,15 @@
       <div id="ac-empty" class="ac-empty-state">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
         <p>Your AI-generated action cards will appear here.<br/>Type your daily notes above and click <strong>Generate Actions</strong>.</p>
+        
+        <div class="ac-recommendations" style="margin-top: 28px; text-align: left; max-width: 620px; margin-left: auto; margin-right: auto;">
+          <h3 style="font-size: 13.5px; font-weight: 600; color: #475569; margin-bottom: 12px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px;">💡 Try these prompts for Iyengar Bakery</h3>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <button class="rec-pill-btn" style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 10px 14px; border-radius: 8px; font-size: 13px; color: #475569; text-align: left; cursor: pointer; transition: all 0.15s; font-family: inherit;" onclick="document.getElementById('ac-input').value = this.innerText; document.getElementById('ac-input').focus();">We are running extremely low on maida and sugar. Only 2 sacks of wheat flour left in the pantry. Need to call the wholesale dealer Ramesh today to order 15 sacks.</button>
+            <button class="rec-pill-btn" style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 10px 14px; border-radius: 8px; font-size: 13px; color: #475569; text-align: left; cursor: pointer; transition: all 0.15s; font-family: inherit;" onclick="document.getElementById('ac-input').value = this.innerText; document.getElementById('ac-input').focus();">Electricity bill of Rs. 4,200 is due this Friday. Also, check if the payment of Rs. 8,500 from the corporate catering event was credited to our bank account.</button>
+            <button class="rec-pill-btn" style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 10px 14px; border-radius: 8px; font-size: 13px; color: #475569; text-align: left; cursor: pointer; transition: all 0.15s; font-family: inherit;" onclick="document.getElementById('ac-input').value = this.innerText; document.getElementById('ac-input').focus();">Pineapple cakes and sweet buns sales have dropped by 15% this week. We should run a 10% discount on cakes for the weekend to clear inventory.</button>
+          </div>
+        </div>
       </div>
 
       <!-- Dynamic Cards Grid (populated by action-center.js) -->
@@ -637,10 +651,10 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js?v=9"></script>
-<script src="auth.js?v=11"></script>
+<script src="auth.js?v=12"></script>
 <script src="gemma-config.js"></script>
 <script src="gemma.js?v=14"></script>
-<script src="action-center.js"></script>
+<script src="action-center.js?v=2"></script>
 <script>
   function checkAuth() {
     if (!window.saakhAuthInitialized) return;
