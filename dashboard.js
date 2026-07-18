@@ -75,7 +75,15 @@
       // Seed forecast
       await window.supabaseClient.from('saakh_forecasts').insert({
         user_id: userId,
-        forecast_data: { avgDailyIncome: 4500, avgDailyExpense: 1200, currentBalance: 12500, projectedRunwayDays: 145, growthRate: 5.2, predictions: [{ date: '2026-07-18', predictedBalance: 12500 }] },
+        forecast_data: {
+          avgDailyIncome: 4500,
+          avgDailyExpense: 1200,
+          currentBalance: 12500,
+          projectedRunwayDays: 145,
+          growthRate: 5.2,
+          predictions: [{ date: '2026-07-18', predictedBalance: 12500 }],
+          gemmaSuggestion: "Your counter sales are strong, but the bulk purchase of flour/sugar on Day 5 will temporarily reduce your runway. Consider delaying the misc packaging purchase to Day 15 to maintain a healthier cash buffer."
+        },
         created_at: new Date().toISOString()
       });
 

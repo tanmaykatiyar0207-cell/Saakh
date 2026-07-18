@@ -49,20 +49,23 @@ async function seedData() {
   const docsToSeed = [
     {
       user_id: userId,
-      file_name: 'Flour_Sugar_Invoice_March.pdf',
+      file_name: 'Flour_Sugar_Invoice_June.pdf',
       file_type: 'application/pdf',
+      created_at: '2026-06-05T10:00:00Z',
       extracted_data: { netProfit: -1500, expenses: [{ description: 'Flour and Sugar bulk purchase', amount: 1500 }] }
     },
     {
       user_id: userId,
-      file_name: 'Daily_Sales_Report_March.csv',
+      file_name: 'Daily_Sales_Report_June.csv',
       file_type: 'text/csv',
+      created_at: '2026-06-15T18:00:00Z',
       extracted_data: { netProfit: 8000, income: [{ description: 'Daily counter sales', amount: 8000 }] }
     },
     {
       user_id: userId,
-      file_name: 'Electricity_Bill_March.pdf',
+      file_name: 'Electricity_Bill_June.pdf',
       file_type: 'application/pdf',
+      created_at: '2026-06-25T11:00:00Z',
       extracted_data: { netProfit: -400, expenses: [{ description: 'Electricity Bill', amount: 400 }] }
     }
   ];
@@ -81,13 +84,14 @@ async function seedData() {
     avgDailyIncome: 4500,
     avgDailyExpense: 1200,
     currentBalance: 12500,
+    projectedRunwayDays: 145,
     growthRate: 5.2,
     predictions: [
-      { date: new Date().toISOString().split('T')[0], predictedBalance: 12500 },
-      { date: new Date(Date.now() + 86400000).toISOString().split('T')[0], predictedBalance: 15800 },
-      { date: new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0], predictedBalance: 19100 }
+      { date: '2026-07-18', predictedBalance: 12500 },
+      { date: '2026-07-19', predictedBalance: 15800 },
+      { date: '2026-07-20', predictedBalance: 19100 }
     ],
-    summary: "Iyengar Bakery shows strong consistent daily sales with manageable overhead. We predict steady cash flow growth."
+    gemmaSuggestion: "Your counter sales are strong, but the bulk purchase of flour/sugar on Day 5 will temporarily reduce your runway. Consider delaying the misc packaging purchase to Day 15 to maintain a healthier cash buffer."
   };
 
   const { error: forecastError } = await supabase.from('saakh_forecasts').insert({
