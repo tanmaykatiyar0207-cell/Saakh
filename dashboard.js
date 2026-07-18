@@ -67,9 +67,9 @@
     try {
       // Seed documents
       await window.supabaseClient.from('saakh_documents').insert([
-        { user_id: userId, file_name: 'Flour_Sugar_Invoice_March.pdf', file_type: 'application/pdf', extracted_data: { netProfit: -1500, expenses: [{ label: 'Flour and Sugar bulk purchase', amount: 1500 }] } },
-        { user_id: userId, file_name: 'Daily_Sales_Report_March.csv', file_type: 'text/csv', extracted_data: { netProfit: 8000, income: [{ label: 'Daily counter sales', amount: 8000 }] } },
-        { user_id: userId, file_name: 'Electricity_Bill_March.pdf', file_type: 'application/pdf', extracted_data: { netProfit: -400, expenses: [{ label: 'Electricity Bill', amount: 400 }] } }
+        { user_id: userId, file_name: 'Flour_Sugar_Invoice_June.pdf', file_type: 'application/pdf', created_at: '2026-06-05T10:00:00Z', extracted_data: { netProfit: -1500, expenses: [{ label: 'Flour and Sugar bulk purchase', amount: 1500 }] } },
+        { user_id: userId, file_name: 'Daily_Sales_Report_June.csv', file_type: 'text/csv', created_at: '2026-06-15T18:00:00Z', extracted_data: { netProfit: 8000, income: [{ label: 'Daily counter sales', amount: 8000 }] } },
+        { user_id: userId, file_name: 'Electricity_Bill_June.pdf', file_type: 'application/pdf', created_at: '2026-06-25T11:00:00Z', extracted_data: { netProfit: -400, expenses: [{ label: 'Electricity Bill', amount: 400 }] } }
       ]);
       
       // Seed forecast
