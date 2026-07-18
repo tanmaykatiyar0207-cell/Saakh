@@ -375,7 +375,28 @@
 
     // Populate transaction table
     txTableBody.innerHTML = '';
-    const rawLines = Array.isArray(data.rawLines) ? data.rawLines : [];
+    let rawLines = Array.isArray(data.rawLines) ? data.rawLines : [];
+    
+    if (rawLines.length === 0) {
+      const inc = Array.isArray(data.income) ? data.income : [];
+      const exp = Array.isArray(data.expenses) ? data.expenses : [];
+      inc.forEach(item => {
+        rawLines.push({
+          date: data.period || 'June 2026',
+          description: item.label || 'Income',
+          direction: 'in',
+          amount: typeof item.amount === 'number' ? item.amount : parseFloat(String(item.amount).replace(/[^\d.]/g, '')) || 0
+        });
+      });
+      exp.forEach(item => {
+        rawLines.push({
+          date: data.period || 'June 2026',
+          description: item.label || 'Expense',
+          direction: 'out',
+          amount: typeof item.amount === 'number' ? item.amount : parseFloat(String(item.amount).replace(/[^\d.]/g, '')) || 0
+        });
+      });
+    }
     
     if (rawLines.length === 0) {
       txTableBody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#94A3B8;">No transaction line details found.</td></tr>';

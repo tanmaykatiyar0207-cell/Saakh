@@ -45,6 +45,9 @@ async function seedData() {
   console.log(`Successfully authenticated user ID: ${userId}`);
 
   // 2. Seed saakh_documents
+  console.log("Cleaning up old documents...");
+  await supabase.from('saakh_documents').delete().eq('user_id', userId);
+  
   console.log("Seeding documents...");
   const docsToSeed = [
     {
@@ -52,21 +55,66 @@ async function seedData() {
       file_name: 'Flour_Sugar_Invoice_June.pdf',
       file_type: 'application/pdf',
       created_at: '2026-06-05T10:00:00Z',
-      extracted_data: { netProfit: -1500, expenses: [{ description: 'Flour and Sugar bulk purchase', amount: 1500 }] }
+      extracted_data: {
+        businessName: 'Iyengar Bakery',
+        period: 'June 2026',
+        source: 'Flour_Sugar_Invoice_June.pdf',
+        score: '650',
+        scoreLabel: 'Fair',
+        income: [],
+        expenses: [{ label: 'Flour and Sugar bulk purchase', amount: 'Rs 1,500' }],
+        incomeTotal: 'Rs 0',
+        expenseTotal: 'Rs 1,500',
+        netProfit: '-Rs 1,500',
+        profitMargin: '0%',
+        cashFlow: 'Negative',
+        narrative: [{ title: 'Expense Breakdown', body: 'This invoice records a bulk purchase of flour and sugar totaling Rs 1,500. This is a critical raw material input for baking operations.' }],
+        rawLines: [{ raw: '05-06-2026 Bulk Flour and Sugar purchase - Rs 1,500', date: '05-06-2026', description: 'Bulk Flour and Sugar purchase', amount: 1500, direction: 'out', confidence: 'high' }]
+      }
     },
     {
       user_id: userId,
       file_name: 'Daily_Sales_Report_June.csv',
       file_type: 'text/csv',
       created_at: '2026-06-15T18:00:00Z',
-      extracted_data: { netProfit: 8000, income: [{ description: 'Daily counter sales', amount: 8000 }] }
+      extracted_data: {
+        businessName: 'Iyengar Bakery',
+        period: 'June 2026',
+        source: 'Daily_Sales_Report_June.csv',
+        score: '740',
+        scoreLabel: 'Strong',
+        income: [{ label: 'Daily counter sales', amount: 'Rs 8,000' }],
+        expenses: [],
+        incomeTotal: 'Rs 8,000',
+        expenseTotal: 'Rs 0',
+        netProfit: 'Rs 8,000',
+        profitMargin: '100%',
+        cashFlow: 'Positive',
+        narrative: [{ title: 'Revenue Stability', body: 'Strong daily counter biscuit and bread sales recorded on June 15th, indicating steady daily cash flow.' }],
+        rawLines: [{ raw: '15-06-2026 Counter Biscuits & Bread Sales - Rs 8,000', date: '15-06-2026', description: 'Counter Biscuits & Bread Sales', amount: 8000, direction: 'in', confidence: 'high' }]
+      }
     },
     {
       user_id: userId,
       file_name: 'Electricity_Bill_June.pdf',
       file_type: 'application/pdf',
       created_at: '2026-06-25T11:00:00Z',
-      extracted_data: { netProfit: -400, expenses: [{ description: 'Electricity Bill', amount: 400 }] }
+      extracted_data: {
+        businessName: 'Iyengar Bakery',
+        period: 'June 2026',
+        source: 'Electricity_Bill_June.pdf',
+        score: '680',
+        scoreLabel: 'Strong',
+        income: [],
+        expenses: [{ label: 'Electricity Bill', amount: 'Rs 400' }],
+        incomeTotal: 'Rs 0',
+        expenseTotal: 'Rs 400',
+        netProfit: '-Rs 400',
+        profitMargin: '0%',
+        cashFlow: 'Negative',
+        narrative: [{ title: 'Utility Costs', body: 'Payment of monthly electricity bill for oven and bakery lights.' }],
+        rawLines: [{ raw: '25-06-2026 Electricity Bill Paid - Rs 400', date: '25-06-2026', description: 'Electricity Bill Paid', amount: 400, direction: 'out', confidence: 'high' }]
+      }
     }
   ];
 
