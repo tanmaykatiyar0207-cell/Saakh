@@ -58,7 +58,20 @@
     let docs = [];
     let forecast = null;
 
-    // 1. Fetch Vault Data (Prioritize Supabase)
+    // 0. Instantly load from local storage cache to eliminate the 0s flash delay (Stale-While-Revalidate)
+    try {
+      const rawVault = localStorage.getItem('saakh_vault_' + userId);
+      const rawForecast = localStorage.getItem('saakh_forecast_' + userId);
+      if (rawVault) docs = JSON.parse(rawVault);
+      if (rawForecast) forecast = JSON.parse(rawForecast);
+      if (docs.length > 0 || forecast) {
+        renderKPIs(docs, forecast);
+        renderTopExpenses(docs);
+        renderNeedsAttention(forecast);
+      }
+    } catch (_) {}
+
+    // 1. Fetch Fresh Vault Data from Supabase
     if (window.supabaseClient) {
       try {
         const { data, error } = await window.supabaseClient.from('saakh_documents').select('*').eq('user_id', userId);
@@ -70,21 +83,14 @@
             }
             return { extractedData: parsed };
           });
+          localStorage.setItem('saakh_vault_' + userId, JSON.stringify(docs));
         }
       } catch (err) {
-        console.warn("Supabase fetch failed, falling back to local storage");
+        console.warn("Supabase fetch failed, keeping local storage");
       }
     }
     
-    // Fallback to local storage
-    if (docs.length === 0) {
-      try {
-        const rawVault = localStorage.getItem('saakh_vault_' + userId);
-        if (rawVault) docs = JSON.parse(rawVault);
-      } catch (_) {}
-    }
-
-    // 2. Fetch Forecast Data (Prioritize Supabase)
+    // 2. Fetch Fresh Forecast Data from Supabase
     if (window.supabaseClient) {
       try {
         const { data, error } = await window.supabaseClient.from('saakh_forecasts').select('*').eq('user_id', userId).order('created_at', { ascending: false }).limit(1);
@@ -94,20 +100,14 @@
             try { parsed = JSON.parse(parsed); } catch(e){}
           }
           forecast = parsed;
+          localStorage.setItem('saakh_forecast_' + userId, JSON.stringify(forecast));
         }
       } catch (err) {
         console.warn("Supabase forecast fetch failed");
       }
     }
 
-    // Fallback to local storage
-    if (!forecast) {
-      try {
-        const rawForecast = localStorage.getItem('saakh_last_forecast_' + userId);
-        if (rawForecast) forecast = JSON.parse(rawForecast).forecast_data;
-      } catch (_) {}
-    }
-
+    // 3. Re-render with fresh data
     renderKPIs(docs, forecast);
     renderTopExpenses(docs);
     renderNeedsAttention(forecast);
