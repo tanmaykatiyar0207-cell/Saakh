@@ -286,7 +286,7 @@
         year: 'numeric'
       });
 
-      const netProfitVal = Number(doc.extractedData?.netProfit) || 0;
+      const netProfitVal = parseAmount(doc.extractedData?.netProfit);
       const netSurplusStr = (netProfitVal < 0 ? '-' : '') + '₹' + Math.abs(netProfitVal).toLocaleString('en-IN');
       const isNegative = netProfitVal < 0;
       const netClass = isNegative ? 'doc-net negative' : 'doc-net positive';
@@ -528,6 +528,14 @@
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;');
+  }
+
+  function parseAmount(val) {
+    if (typeof val === 'number') return val;
+    if (!val) return 0;
+    const clean = String(val).replace(/[₹\s,]|Rs/gi, '');
+    const num = parseFloat(clean);
+    return isNaN(num) ? 0 : num;
   }
 
 })();
