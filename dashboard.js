@@ -5,6 +5,7 @@
 
 (function () {
   'use strict';
+  console.log("dashboard.js script loaded!");
 
   let activeUser = null;
 
@@ -24,12 +25,23 @@
     return '₹' + Number(val).toLocaleString('en-IN');
   }
 
-  window.addEventListener('saakh-auth-initialized', init);
   window.addEventListener('saakh-auth-changed', init);
 
+  if (window.saakhAuthInitialized) {
+    console.log("dashboard.js: auth already initialized, running init() immediately");
+    init();
+  } else {
+    console.log("dashboard.js: auth not initialized yet, waiting for event");
+    window.addEventListener('saakh-auth-initialized', init);
+  }
+
   async function init() {
+    console.log("dashboard.js: init() called. window.currentUser:", window.currentUser);
     activeUser = window.currentUser;
-    if (!activeUser) return;
+    if (!activeUser) {
+      console.log("dashboard.js: init() - no activeUser, returning");
+      return;
+    }
     
     setupCopilotWidget();
     await loadDashboardData();
@@ -81,8 +93,12 @@
 
   // ── Data Loading & Calculation ─────────────────────────────────
   async function loadDashboardData() {
+    console.log("dashboard.js: loadDashboardData() started");
     const user = activeUser || window.currentUser;
-    if (!user) return;
+    if (!user) {
+      console.log("dashboard.js: loadDashboardData() - no user, returning");
+      return;
+    }
     const userId = user.id;
     let docs = [];
     let forecast = null;
