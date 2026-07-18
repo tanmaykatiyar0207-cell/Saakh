@@ -1,4 +1,4 @@
-﻿/* ================================================================
+/* ================================================================
    Saakh — Export Page Logic
    Chat-to-PDF: User types a time frame, Gemma parses it,
    vault docs are filtered, and a PDF is generated.
@@ -212,11 +212,20 @@
         });
       });
 
-      const scores = lastMatchedDocs.map(d => parseInt(d.extractedData?.score) || 600);
-      const avgScore = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
-      let scoreLabel = avgScore >= 750 ? 'Excellent' : avgScore >= 650 ? 'Strong' : 'Fair';
-
+      // Dynamic Saakh Score Calculation for the export period
+      let pDepth = Math.min(150, (allIncome.length + allExpenses.length) * 5);
+      let pProfit = 0;
       const netProfit = totalIncome - totalExpense;
+      if (netProfit > 50000) pProfit = 150;
+      else if (netProfit > 10000) pProfit = 100;
+      else if (netProfit > 0) pProfit = 50;
+      
+      let pRunway = 100; // Estimated baseline for a period
+      let pStability = netProfit > 0 ? 100 : 50; // Estimated baseline
+      
+      const dynamicScore = Math.min(900, 300 + pDepth + pProfit + pRunway + pStability);
+      let scoreLabel = dynamicScore >= 750 ? 'Excellent' : dynamicScore >= 600 ? 'Good' : 'Needs Work';
+
       const margin = totalIncome > 0
         ? ((netProfit / totalIncome) * 100).toFixed(1) + '%'
         : '0%';
@@ -228,7 +237,7 @@
         businessName: shopName,
         period: lastParsedPeriod,
         source: 'Exported from Vault: ' + fileNames,
-        score: String(avgScore),
+        score: String(dynamicScore),
         scoreLabel,
         income:   allIncome.map(x => ({ label: x.label, amount: 'Rs ' + Number(x.amount).toLocaleString('en-IN') })),
         incomeTotal:   'Rs ' + totalIncome.toLocaleString('en-IN'),
@@ -243,7 +252,7 @@
           },
           {
             title: 'Cash Position',
-            body: `Net surplus for this period is Rs ${netProfit.toLocaleString('en-IN')}, representing a ${margin} profit margin. The Saakh Credit Score for this period is ${avgScore} (${scoreLabel}).`
+            body: `Net surplus for this period is Rs ${netProfit.toLocaleString('en-IN')}, representing a ${margin} profit margin. The Saakh Credit Score for this period is ${dynamicScore} (${scoreLabel}).`
           },
           {
             title: 'Lender Note',

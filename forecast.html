@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -156,45 +156,54 @@
 
   <!-- ── Sidebar ──────────────────────────────────────────────── -->
   <aside class="sidebar">
-    <a href="index.html" class="sidebar-brand">
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <rect x="2" y="2" width="24" height="24" rx="7" fill="url(#logoGradF)"/>
-        <path d="M9 14L12.5 17.5L19 10" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <defs><linearGradient id="logoGradF" x1="2" y1="2" x2="26" y2="26"><stop offset="0%" stop-color="#10B981"/><stop offset="100%" stop-color="#047857"/></linearGradient></defs>
-      </svg>
-      <span style="font-size:15px; font-weight:700; color:#0F172A;">Saakh</span>
+    <a href="index.html" class="sidebar-brand" style="text-decoration:none;color:inherit;gap:12px;">
+      <div class="brand-icon" style="background:transparent;width:auto;height:auto;">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <rect x="2" y="2" width="24" height="24" rx="7" fill="url(#logoGradF)"/>
+          <path d="M9 14L12.5 17.5L19 10" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <defs><linearGradient id="logoGradF" x1="2" y1="2" x2="26" y2="26"><stop offset="0%" stop-color="#10B981"/><stop offset="100%" stop-color="#047857"/></linearGradient></defs>
+        </svg>
+      </div>
+      <div class="brand-text-wrap">
+        <span class="nav-logo-text sm" style="margin-left: 0;">Saakh</span>
+      </div>
     </a>
 
     <nav class="sidebar-nav">
-      <a href="index.html" class="nav-item">
+      <a href="index.html" class="nav-item" data-i18n="nav_home">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         Home
       </a>
-      <a href="dashboard.html" class="nav-item">
+      <a href="dashboard.html" class="nav-item" data-i18n="nav_summary">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
         Summary
       </a>
-      <a href="upload-understand.html" class="nav-item">
+      <a href="upload-understand.html" class="nav-item" data-i18n="nav_upload">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         Upload & Understand
       </a>
-      <a href="#" class="nav-item">
+      <a href="copilot.html" class="nav-item" data-i18n="nav_copilot">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         AI Copilot
       </a>
-      <a href="forecast.html" class="nav-item active">
+      <a href="forecast.html" class="nav-item active" data-i18n="nav_forecast">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         Forecast
       </a>
-      <a href="action-center.html" class="nav-item">
+      <a href="action-center.html" class="nav-item" data-i18n="nav_actions">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
         Action Center
       </a>
-      <a href="export.html" class="nav-item">
+      <a href="export.html" class="nav-item" data-i18n="nav_export">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Export
       </a>
-      <a href="#" class="nav-item" id="nav-logout-btn">
+            <a href="score.html" class="nav-item" data-i18n="nav_score">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        Saakh Score
+      </a>
+      
+      <a href="#" class="nav-item" id="nav-logout-btn" data-i18n="nav_logout">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         Logout
       </a>
@@ -203,9 +212,9 @@
     <div class="sidebar-footer">
       <div class="gemma-badge">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
-        Powered by Gemma
+        <span data-i18n="nav_powered">Powered by Gemma</span>
       </div>
-      <p>On-device AI reading your ledgers privately.</p>
+      <p><span data-i18n="nav_privacy">On-device AI reading your ledgers privately.</span></p>
     </div>
   </aside>
 
@@ -216,7 +225,16 @@
         <div class="topbar-biz-label">Forecast</div>
         <div class="topbar-biz-name" id="fc-biz-name">AI Cashflow Copilot</div>
       </div>
-      <div class="topbar-right">
+      <div class="topbar-right" style="display:flex; align-items:center; gap:16px;">
+        <select class="lang-selector" style="padding: 6px 10px; border-radius: 8px; border: 1px solid #E2E8F0; background: #F8FAFC; color: #475569; font-size: 13px; font-weight: 500; outline: none; cursor: pointer;">
+          <option value="en">English</option>
+          <option value="hi">हिंदी (Hindi)</option>
+          <option value="hinglish">Hinglish</option>
+          <option value="ta">தமிழ் (Tamil)</option>
+          <option value="te">తెలుగు (Telugu)</option>
+          <option value="kn">ಕನ್ನಡ (Kannada)</option>
+          <option value="mr">मराठी (Marathi)</option>
+        </select>
         <a href="index.html" class="home-btn">Home</a>
         <div class="user-chip">
           <div class="avatar" id="fc-avatar">
@@ -239,9 +257,9 @@
           <p class="page-subtitle">Gemma analyses your transaction history and projects 30 days ahead with recurring bill detection and inventory restock alerts.</p>
         </div>
         <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; margin-top: 4px;">
-          <button class="export-generate-btn" id="fc-now-btn" style="display: none; padding: 10px 18px; font-size: 13.5px; font-weight: 700; border-radius: 9px; cursor: pointer; border: none; font-family: 'Inter', sans-serif;">
+          <button class="export-generate-btn" id="fc-now-btn" style="padding: 10px 18px; font-size: 13.5px; font-weight: 700; border-radius: 9px; cursor: pointer; border: none; font-family: 'Inter', sans-serif;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px; vertical-align: middle;"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
-            Forecast Now
+            <span data-i18n="forecast_btn">Forecast Now</span>
           </button>
           <span id="fc-timestamp" style="font-size: 12px; color: #94A3B8; font-weight: 500;"></span>
         </div>
@@ -268,7 +286,7 @@
       <!-- KPI Row -->
       <div class="kpi-row" id="fc-chart-container" style="display:none;">
         <div class="runway-card">
-          <div style="font-size:11px; color:rgba(255,255,255,0.7); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Cash Runway</div>
+          <div style="font-size:11px; color:rgba(255,255,255,0.7); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;"><span data-i18n="dash_runway">Cash Runway</span></div>
           <div class="runway-badge healthy" id="fc-runway-badge">30+ days</div>
           <div class="runway-sub-label" id="fc-runway-label">Strong Runway</div>
         </div>
@@ -359,7 +377,7 @@
               <div id="fc-restock-list"></div>
             </div>
             <div>
-              <div class="section-sub-title">🚨 Cash Warnings</div>
+              <div class="section-sub-title">🚨 <span data-i18n="forecast_warnings">Cash Warnings</span></div>
               <div id="fc-warnings-list"></div>
             </div>
           </div>
@@ -374,8 +392,8 @@
 <script src="supabase-config.js?v=9"></script>
 <script src="auth.js?v=11"></script>
 <script src="gemma-config.js"></script>
-<script src="gemma.js"></script>
-<script src="forecast.js?v=12"></script>
+<script src="gemma.js?v=14"></script>
+<script src="forecast.js?v=13"></script>
 <script>
   function checkAuth() {
     if (!window.saakhAuthInitialized) return;
@@ -408,5 +426,10 @@
   });
   fcObs.observe(document.getElementById('fc-chart-container'), { attributes: true, attributeFilter: ['style'] });
 </script>
+<script src="i18n.js?v=1"></script>
+<script src="i18n.js?v=1"></script>
 </body>
 </html>
+
+
+

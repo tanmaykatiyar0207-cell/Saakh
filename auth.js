@@ -64,9 +64,11 @@ function initSupabase() {
 
 try {
   supabaseClient = initSupabase();
+  window.supabaseClient = supabaseClient;
 } catch (err) {
   console.error('[Saakh] Failed to initialize Supabase:', err);
   supabaseClient = null;
+  window.supabaseClient = null;
 }
 
 function setAuthError(message) {

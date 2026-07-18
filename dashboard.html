@@ -548,35 +548,40 @@
     </a>
 
     <nav class="sidebar-nav">
-      <a href="index.html" class="nav-item">
+      <a href="index.html" class="nav-item" data-i18n="nav_home">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         Home
       </a>
-      <a href="dashboard.html" class="nav-item active">
+      <a href="dashboard.html" class="nav-item active" data-i18n="nav_summary">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
         Summary
       </a>
-      <a href="upload-understand.html" class="nav-item">
+      <a href="upload-understand.html" class="nav-item" data-i18n="nav_upload">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         Upload & Understand
       </a>
-      <a href="#" class="nav-item">
+      <a href="copilot.html" class="nav-item" data-i18n="nav_copilot">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         AI Copilot
       </a>
-      <a href="forecast.html" class="nav-item">
+      <a href="forecast.html" class="nav-item" data-i18n="nav_forecast">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         Forecast
       </a>
-      <a href="action-center.html" class="nav-item">
+      <a href="action-center.html" class="nav-item" data-i18n="nav_actions">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
         Action Center
       </a>
-      <a href="export.html" class="nav-item">
+      <a href="export.html" class="nav-item" data-i18n="nav_export">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Export
       </a>
-      <a href="#" class="nav-item" id="nav-logout-btn">
+            <a href="score.html" class="nav-item" data-i18n="nav_score">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        Saakh Score
+      </a>
+      
+      <a href="#" class="nav-item" id="nav-logout-btn" data-i18n="nav_logout">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         Logout
       </a>
@@ -585,9 +590,9 @@
     <div class="sidebar-footer">
       <div class="gemma-badge">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
-        Powered by Gemma
+        <span data-i18n="nav_powered">Powered by Gemma</span>
       </div>
-      <p>On-device AI reading your ledgers privately.</p>
+      <p><span data-i18n="nav_privacy">On-device AI reading your ledgers privately.</span></p>
     </div>
   </aside>
 
@@ -600,7 +605,16 @@
         <div class="topbar-biz-label">Dashboard</div>
         <div class="topbar-biz-name">AI Cashflow Copilot</div>
       </div>
-      <div class="topbar-right">
+      <div class="topbar-right" style="display:flex; align-items:center; gap:16px;">
+        <select class="lang-selector" style="padding: 6px 10px; border-radius: 8px; border: 1px solid #E2E8F0; background: #F8FAFC; color: #475569; font-size: 13px; font-weight: 500; outline: none; cursor: pointer;">
+          <option value="en">English</option>
+          <option value="hi">हिंदी (Hindi)</option>
+          <option value="hinglish">Hinglish</option>
+          <option value="ta">தமிழ் (Tamil)</option>
+          <option value="te">తెలుగు (Telugu)</option>
+          <option value="kn">ಕನ್ನಡ (Kannada)</option>
+          <option value="mr">मराठी (Marathi)</option>
+        </select>
         <button class="notif-btn">
           <div class="notif-dot"></div>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
@@ -618,7 +632,93 @@
 
     <!-- Page Content -->
     <div class="page-content">
+      
+      <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 32px;">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <p class="section-title">EXECUTIVE OVERVIEW</p>
+              <h1 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 28px; margin-bottom: 8px; color: #0F172A;" data-i18n="business_summary">Business Summary</h1>
+              <p style="color: #64748B; margin-bottom: 30px;" data-i18n="business_summary_desc">A high-level view of your financial health across all uploaded ledgers and forecasts.</p>
+            </div>
+            <button id="emergency-seed-btn" class="btn btn-primary" style="background: #EAB308; border: none; padding: 10px 20px; font-weight: bold;">⚠️ Click Here: Seed Demo Data</button>
+          </div>
+        </div>
+      </div>
 
+      <!-- Quick Copilot Widget -->
+      <div style="background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; padding: 24px; margin-bottom: 32px; box-shadow: 0 4px 20px rgba(15,23,42,0.03); display: flex; align-items: center; gap: 16px;">
+        <div style="width: 48px; height: 48px; border-radius: 50%; background: #ECFDF5; display: flex; align-items: center; justify-content: center; color: #059669; flex-shrink: 0;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <div style="flex: 1;">
+          <h3 style="font-size: 15px; font-weight: 700; color: #0F172A; margin-bottom: 4px;"><span data-i18n="dash_ask_copilot">Ask AI Copilot</span></h3>
+          <p style="font-size: 13px; color: #64748B;"><span data-i18n="dash_ask_sub">Have a question about this summary? Ask Gemma instantly.</span></p>
+        </div>
+        <div style="flex: 2; position: relative;">
+          <input type="text" id="dash-copilot-input" placeholder="e.g. Can I afford a Rs. 15,000 expense next week?" data-i18n-placeholder="copilot_input_placeholder" style="width: 100%; padding: 12px 48px 12px 16px; border: 1px solid #E2E8F0; border-radius: 12px; font-size: 14px; font-family: 'Inter', sans-serif; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='#10B981'" onblur="this.style.borderColor='#E2E8F0'" />
+          <button id="dash-copilot-btn" style="position: absolute; right: 6px; top: 6px; bottom: 6px; width: 36px; border-radius: 8px; background: #10B981; color: #fff; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI Grid -->
+      <div class="cards-grid" style="margin-bottom: 32px;">
+        
+        <!-- Net Profit Card -->
+        <div class="acard" style="justify-content: center;">
+          <div style="font-size: 12px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;"><span data-i18n="dash_profit">Total Net Profit</span></div>
+          <div id="dash-kpi-profit" style="font-size: 32px; font-weight: 800; font-family: 'Space Grotesk', sans-serif; color: #0F172A;">₹0</div>
+          <div style="font-size: 13px; color: #94A3B8; margin-top: 4px;">Across all Vault ledgers</div>
+        </div>
+
+        <!-- Cash Balance Card -->
+        <div class="acard" style="justify-content: center;">
+          <div style="font-size: 12px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;"><span data-i18n="dash_balance">Est. Cash Balance</span></div>
+          <div id="dash-kpi-balance" style="font-size: 32px; font-weight: 800; font-family: 'Space Grotesk', sans-serif; color: #0F172A;">₹0</div>
+          <div style="font-size: 13px; color: #94A3B8; margin-top: 4px;">Based on latest forecast</div>
+        </div>
+
+        <!-- Runway Card -->
+        <div class="score-widget" style="display: flex; flex-direction: column; justify-content: center;">
+          <div class="score-widget-label"><span data-i18n="dash_runway">Cash Runway</span></div>
+          <div style="display: flex; align-items: baseline; gap: 8px;">
+            <div id="dash-kpi-runway" class="score-widget-value">0</div>
+            <div style="font-size: 18px; font-weight: 600; opacity: 0.9;">days</div>
+          </div>
+          <div class="score-widget-sub" style="margin-bottom: 0; margin-top: 4px;"><span data-i18n="dash_runway_sub">Until cash depletion</span></div>
+        </div>
+        
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+        
+        <!-- Top Expenses Breakdown -->
+        <div style="background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; padding: 24px; box-shadow: 0 1px 4px rgba(15,23,42,0.02);">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+            <h3 style="font-size: 16px; font-weight: 700; color: #0F172A;"><span data-i18n="dash_top_expenses">Top Expense Categories</span></h3>
+            <div style="font-size: 12px; font-weight: 600; color: #64748B; background: #F1F5F9; padding: 4px 10px; border-radius: 20px;">Vault Data</div>
+          </div>
+          <div id="dash-expenses-list" style="display: flex; flex-direction: column; gap: 16px;">
+            <!-- Rendered via JS -->
+            <div style="color: #94A3B8; font-size: 14px; text-align: center; padding: 20px 0;">No expense data found in vault.</div>
+          </div>
+        </div>
+
+        <!-- Needs Attention -->
+        <div style="background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; padding: 24px; box-shadow: 0 1px 4px rgba(15,23,42,0.02);">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+            <h3 style="font-size: 16px; font-weight: 700; color: #0F172A;"><span data-i18n="dash_attention">Needs Attention</span></h3>
+            <div style="font-size: 12px; font-weight: 600; color: #DC2626; background: #FEF2F2; padding: 4px 10px; border-radius: 20px;">Forecast Data</div>
+          </div>
+          <div id="dash-attention-list" style="display: flex; flex-direction: column; gap: 12px;">
+            <!-- Rendered via JS -->
+            <div style="color: #94A3B8; font-size: 14px; text-align: center; padding: 20px 0;">No urgent items detected.</div>
+          </div>
+        </div>
+
+      </div>
 
     </div>
   </div>
@@ -626,7 +726,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js?v=9"></script>
-<script src="auth.js?v=11"></script>
+<script src="auth.js?v=12"></script>
 <script>
   function checkAuth() {
     if (!window.saakhAuthInitialized) return;
@@ -675,6 +775,8 @@
     });
   }
 </script>
+    <script src="dashboard.js?v=3"></script>
+    <script src="i18n.js?v=3"></script>
 </body>
 </html>
 

@@ -84,11 +84,11 @@
     activeUser = window.currentUser;
     if (!activeUser) return;
     
+    // Load documents list from LocalStorage synchronously first so UI updates immediately
+    loadVaultDocs();
+    
     // Check if saakh_forecasts table exists in Supabase
     await checkDatabaseConnection();
-    
-    // Load documents list
-    loadVaultDocs();
     
     // Load previously generated forecast
     await loadPreviousForecast();

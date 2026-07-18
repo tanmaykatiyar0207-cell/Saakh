@@ -641,11 +641,84 @@ Rules:
     return parseJsonLoose(extractModelText(payload));
   }
 
+  // ── AI COPILOT: Conversational Interface ──────────────────────
+  async function chatWithCopilot(contextData, messageHistory) {
+    const cfg = getConfig();
+    const url = `${cfg.endpointBase}/${cfg.model}:generateContent?key=${encodeURIComponent(cfg.apiKey)}`;
+
+    // Build the system instructions with the business context
+    const today = new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    const systemPrompt = `You are the Saakh AI Copilot, a brilliant, friendly financial assistant for an Indian business owner.
+Today's date is: ${today}
+
+Below is the latest financial context of their business based on their uploaded ledger documents and your recent forecasts. 
+Always use this context to answer their questions accurately.
+
+--- BUSINESS CONTEXT START ---
+${contextData}
+--- BUSINESS CONTEXT END ---
+
+Rules:
+1. Be concise, direct, and conversational. Do not output JSON unless asked.
+2. Use markdown formatting (bolding, lists) for readability.
+3. If they ask about something not in the context, politely say you don't have that information in their current documents.
+4. Always speak in terms of Indian Rupees (Rs. or ₹).
+5. Only answer questions related to their business, finances, accounting, or the application.
+`;
+
+    // Append language-specific instructions
+    const lang = localStorage.getItem('saakh_lang') || 'en';
+    let langPrompt = "";
+    if (lang === 'hi') {
+      langPrompt = "Important: Respond in fluent Hindi using Devanagari script. Keep numbers in standard digits (e.g. 500) for readability.";
+    } else if (lang === 'hinglish') {
+      langPrompt = "Important: Respond in casual Hinglish (Hindi written in Roman script, e.g. 'Aapka cash balance badh gaya hai'). Do not use Devanagari script. Keep standard digits.";
+    } else if (lang === 'ta') {
+      langPrompt = "Important: Respond in fluent Tamil using Tamil script. Keep numbers in standard digits (e.g. 500) for readability.";
+    } else if (lang === 'te') {
+      langPrompt = "Important: Respond in fluent Telugu using Telugu script. Keep numbers in standard digits (e.g. 500) for readability.";
+    } else if (lang === 'kn') {
+      langPrompt = "Important: Respond in fluent Kannada using Kannada script. Keep numbers in standard digits (e.g. 500) for readability.";
+    } else if (lang === 'mr') {
+      langPrompt = "Important: Respond in fluent Marathi using Devanagari script. Keep numbers in standard digits (e.g. 500) for readability.";
+    }
+    
+    const finalSystemPrompt = systemPrompt + (langPrompt ? `\n6. ${langPrompt}\n` : "");
+
+    // System instruction is supported in v1beta API as `system_instruction`
+    const body = {
+      system_instruction: {
+        parts: [{ text: finalSystemPrompt }]
+      },
+      contents: messageHistory, // Array of { role: 'user'|'model', parts: [{ text: '...' }] }
+      generationConfig: {
+        temperature: 0.7,
+        maxOutputTokens: 2048,
+      },
+    };
+
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    const payload = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const msg = payload?.error?.message || `Gemma request failed (${res.status}).`;
+      throw new Error(msg);
+    }
+
+    return extractModelText(payload);
+  }
+
   global.SaakhGemma = {
     analyzeDocument,
     generateActionCards,
     parseExportQuery,
     generateSaakhForecast,
+    chatWithCopilot,
     formatInr,
   };
 })(window);
+
