@@ -20,3 +20,4 @@ CREATE POLICY "Users can insert their own tasks" ON public.saakh_tasks FOR INSER
 CREATE POLICY "Users can view their own tasks" ON public.saakh_tasks FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Users can update their own tasks" ON public.saakh_tasks FOR UPDATE USING (auth.uid() = user_id);
 CREATE POLICY "Users can delete their own tasks" ON public.saakh_tasks FOR DELETE USING (auth.uid() = user_id);
+ 

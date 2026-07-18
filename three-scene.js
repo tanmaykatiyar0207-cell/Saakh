@@ -340,3 +340,4 @@ document.addEventListener('DOMContentLoaded', () => {
     renderer.setSize(newWidth, newHeight);
   });
 });
+ 

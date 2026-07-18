@@ -768,3 +768,4 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('%c🪙 Saakh — Frontend Loaded', 'color: #9A6B0A; font-weight: bold; font-size: 14px;');
   console.log('%cLight theme · Ready for backend integration.', 'color: #9E8E72; font-size: 12px;');
 });
+ 
