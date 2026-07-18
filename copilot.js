@@ -15,6 +15,7 @@
   let userDocuments = [];
   let forecastData = null;
   let messageHistory = [];
+  let listenersSetup = false;
   
   // Context String built from Vault & Forecast
   let businessContextString = "";
@@ -31,7 +32,11 @@
     if (!activeUser) return;
     
     await loadContextData();
-    setupEventListeners();
+    
+    if (!listenersSetup) {
+      setupEventListeners();
+      listenersSetup = true;
+    }
     
     // Check for deep link query
     const urlParams = new URLSearchParams(window.location.search);
@@ -65,13 +70,19 @@
           .eq('user_id', userId)
           .order('created_at', { ascending: false });
         if (!error && data && data.length > 0) {
-          docs = data.map(row => ({
-            id: row.id,
-            fileName: row.file_name,
-            fileType: row.file_type,
-            uploadedAt: row.created_at,
-            extractedData: row.extracted_data
-          }));
+          docs = data.map(row => {
+            let ext = row.extracted_data;
+            if (typeof ext === 'string') {
+              try { ext = JSON.parse(ext); } catch(e){}
+            }
+            return {
+              id: row.id,
+              fileName: row.file_name,
+              fileType: row.file_type,
+              uploadedAt: row.created_at,
+              extractedData: ext
+            };
+          });
         }
       } catch (_) {}
     }
@@ -79,9 +90,9 @@
 
     // 3. Load Forecast from LocalStorage (Fallback)
     try {
-      const localF = localStorage.getItem('saakh_last_forecast_' + userId);
+      const localF = localStorage.getItem('saakh_forecast_' + userId);
       if (localF) {
-        forecast = JSON.parse(localF).forecast_data;
+        forecast = JSON.parse(localF);
       }
     } catch (_) {}
 
@@ -95,7 +106,11 @@
           .order('created_at', { ascending: false })
           .limit(1);
         if (!error && data && data.length > 0) {
-          forecast = data[0].forecast_data;
+          let fd = data[0].forecast_data;
+          if (typeof fd === 'string') {
+            try { fd = JSON.parse(fd); } catch(e){}
+          }
+          forecast = fd;
         }
       } catch (_) {}
     }
@@ -168,9 +183,7 @@ ${forecastSummary}
         recognition.continuous = false;
         recognition.interimResults = false;
         
-        // Use user's selected language or fallback to en-IN
         const langSelect = document.querySelector('.lang-selector');
-        
         let isRecording = false;
 
         micBtn.addEventListener('click', () => {
@@ -179,7 +192,6 @@ ${forecastSummary}
             return;
           }
           
-          // Set language dynamically
           let lang = 'en-IN';
           if (langSelect) {
             const val = langSelect.value;
@@ -190,7 +202,6 @@ ${forecastSummary}
             else if (val === 'mr') lang = 'mr-IN';
           }
           recognition.lang = lang;
-
           recognition.start();
         });
 
@@ -214,7 +225,6 @@ ${forecastSummary}
           micBtn.classList.remove('recording');
         };
       } else {
-        // Browser doesn't support Web Speech API
         micBtn.style.display = 'none';
       }
     }
@@ -259,7 +269,6 @@ ${forecastSummary}
     } catch (err) {
       removeTypingIndicator(typingId);
       appendMessage('bot', `*Error: ${err.message}*`);
-      // Remove the last user message from history so they can retry
       messageHistory.pop();
       isSending = false;
     }
@@ -324,10 +333,10 @@ ${forecastSummary}
     // Bold
     html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     
-    // Bullet lists (simple parsing)
+    // Bullet lists
     html = html.replace(/^\* (.*?)$/gm, '<li>$1</li>');
     html = html.replace(/^- (.*?)$/gm, '<li>$1</li>');
-    html = html.replace(/(<li>.*?<\/li>)/s, '<ul>$1</ul>'); // basic wrap
+    html = html.replace(/(<li>.*?<\/li>)/s, '<ul>$1</ul>'); 
 
     // Line breaks
     html = html.replace(/\n/g, '<br/>');
