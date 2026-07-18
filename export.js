@@ -25,13 +25,22 @@
   let lastMatchedDocs = [];
   let lastParsedPeriod = null;
 
+  let initialized = false;
+
   // ── Auth init ────────────────────────────────────────────────
-  window.addEventListener('saakh-auth-initialized', init);
   window.addEventListener('saakh-auth-changed', init);
 
+  if (window.saakhAuthInitialized) {
+    init();
+  } else {
+    window.addEventListener('saakh-auth-initialized', init);
+  }
+
   function init() {
+    if (initialized) return;
     activeUser = window.currentUser;
     if (!activeUser) return;
+    initialized = true;
     loadVaultDocs();
   }
 
@@ -57,7 +66,7 @@
               fileName: row.file_name,
               fileType: row.file_type,
               uploadedAt: row.created_at,
-              extractedData: row.extracted_data
+              extractedData: typeof row.extracted_data === 'string' ? JSON.parse(row.extracted_data) : row.extracted_data
             }));
           }
         })

@@ -76,6 +76,25 @@
   <!-- SDG CARDS SECTION -->
   <section class="how-it-works" style="background: var(--bg-page); border-top: none; padding: 60px 0 100px;">
     <div class="section-container">
+      <!-- Dynamic SDG Profile Widget -->
+      <div id="sdg-profile-widget" style="display: none; max-width: 680px; margin: -100px auto 48px auto; background: white; border: 1px solid #E2E8F0; border-radius: 16px; padding: 24px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); position: relative; z-index: 10;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <h4 style="font-family: var(--font-display); font-size:12px; color:#64748B; margin:0; text-transform:uppercase; letter-spacing:0.5px; font-weight:700;">Business SDG Alignment Profile</h4>
+            <h2 id="sdg-shop-name" style="font-family: var(--font-display); font-size:24px; color:var(--text-primary); margin: 4px 0 0 0; font-weight:700;">My Business</h2>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:12px; color:#64748B; margin-bottom: 2px;">Saakh Credit Score</div>
+            <div id="sdg-score" style="font-size:32px; font-weight:800; color:#10B981; font-family: var(--font-display);">—</div>
+          </div>
+        </div>
+        <hr style="border:0; border-top:1px solid #E2E8F0; margin:16px 0;" />
+        <div style="display:flex; gap:12px; align-items:center;">
+          <div id="sdg-tier-badge" style="background:#ECFDF5; color:#047857; padding: 6px 12px; border-radius: 9999px; font-size:11.5px; font-weight:700; text-transform:uppercase; font-family: var(--font-ui); white-space:nowrap;">Alignment</div>
+          <div id="sdg-desc" style="font-size:13.5px; color:#475569; line-height:1.4; font-family: var(--font-ui);">Calculating alignment...</div>
+        </div>
+      </div>
+
       <div class="steps-grid" style="display: flex; flex-direction: column; gap: 32px; align-items: stretch;">
         
         <!-- SDG 8 -->
@@ -213,7 +232,70 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
-  <script src="auth.js"></script>
+  <script src="auth.js?v=12"></script>
+  <script>
+    async function initSDGPage() {
+      const user = window.currentUser;
+      if (!user) {
+        document.getElementById('sdg-profile-widget').style.display = 'none';
+        return;
+      }
+      
+      const shopName = user.user_metadata?.shop_name || 'My Business';
+      document.getElementById('sdg-shop-name').textContent = shopName;
+      
+      let score = 735; // Default fallback score
+      
+      if (window.supabaseClient) {
+        try {
+          const { data, error } = await window.supabaseClient
+            .from('saakh_scores')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(1);
+            
+          if (!error && data && data.length > 0) {
+            score = data[0].score;
+          }
+        } catch (e) {
+          console.warn("Failed to load live score for SDG page:", e);
+        }
+      }
+      
+      const scoreEl = document.getElementById('sdg-score');
+      const badgeEl = document.getElementById('sdg-tier-badge');
+      const descEl = document.getElementById('sdg-desc');
+      
+      if (scoreEl) scoreEl.textContent = score;
+      
+      if (badgeEl && descEl) {
+        if (score >= 750) {
+          badgeEl.textContent = 'Excellent SDG Alignment';
+          badgeEl.style.background = '#ECFDF5';
+          badgeEl.style.color = '#047857';
+          descEl.textContent = `Your excellent credit history of ${score} strongly demonstrates outstanding MSME trade volumes, fully supporting SDG Target 9.3 (Integration into financial value chains).`;
+        } else if (score >= 650) {
+          badgeEl.textContent = 'Strong SDG Alignment';
+          badgeEl.style.background = '#EFF6FF';
+          badgeEl.style.color = '#1D4ED8';
+          descEl.textContent = `Your strong credit profile of ${score} verifies stable merchant cashbooks and lower microfinance default risk, directly promoting SDG Target 8.3 (MSME formalization).`;
+        } else {
+          badgeEl.textContent = 'Developing SDG Alignment';
+          badgeEl.style.background = '#FFF7ED';
+          badgeEl.style.color = '#C2410C';
+          descEl.textContent = `Your developing credit profile of ${score} points to opportunities for financial inclusion growth. Bridging your informal records supports SDG Target 1.4 (Equal access to micro-services).`;
+        }
+      }
+      
+      const widget = document.getElementById('sdg-profile-widget');
+      if (widget) widget.style.display = 'block';
+    }
+    
+    if (window.saakhAuthInitialized) initSDGPage();
+    else window.addEventListener('saakh-auth-initialized', initSDGPage);
+    window.addEventListener('saakh-auth-changed', initSDGPage);
+  </script>
 
 </body>
 </html>

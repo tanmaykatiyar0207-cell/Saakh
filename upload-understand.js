@@ -35,15 +35,22 @@
   let selectedDocId = null;
   let useLocalStorageOnly = true; // Automatically changes to false if Supabase table exists
 
+  let initialized = false;
+
   // ── INIT & AUTH CHANGE ────────────────────────────────────────
-  window.addEventListener('saakh-auth-initialized', initVault);
-  window.addEventListener('saakh-auth-changed', (e) => {
+  window.addEventListener('saakh-auth-changed', initVault);
+
+  if (window.saakhAuthInitialized) {
     initVault();
-  });
+  } else {
+    window.addEventListener('saakh-auth-initialized', initVault);
+  }
 
   async function initVault() {
+    if (initialized) return;
     activeUser = window.currentUser;
     if (!activeUser) return;
+    initialized = true;
     
     // Check if we can reach the Supabase table
     await checkDatabaseConnection();
@@ -279,8 +286,9 @@
         year: 'numeric'
       });
 
-      const netSurplusStr = doc.extractedData?.netProfit || '₹0';
-      const isNegative = netSurplusStr.includes('-');
+      const netProfitVal = Number(doc.extractedData?.netProfit) || 0;
+      const netSurplusStr = (netProfitVal < 0 ? '-' : '') + '₹' + Math.abs(netProfitVal).toLocaleString('en-IN');
+      const isNegative = netProfitVal < 0;
       const netClass = isNegative ? 'doc-net negative' : 'doc-net positive';
 
       item.innerHTML = `
@@ -441,12 +449,27 @@
         });
       });
 
-      // 2. Average Score
-      const scores = userDocuments.map(d => parseInt(d.extractedData?.score) || 600);
-      const avgScore = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+      // 2. Retrieve Live Score from Supabase
+      let finalScore = 735; // Default fallback score
+      if (window.supabaseClient) {
+        try {
+          const { data: scoreData, error: scoreErr } = await window.supabaseClient
+            .from('saakh_scores')
+            .select('*')
+            .eq('user_id', activeUser.id)
+            .order('created_at', { ascending: false })
+            .limit(1);
+          if (!scoreErr && scoreData && scoreData.length > 0) {
+            finalScore = scoreData[0].score;
+          }
+        } catch (e) {
+          console.warn("Failed to retrieve live score for consolidation:", e);
+        }
+      }
+
       let scoreLabel = 'Fair';
-      if (avgScore >= 750) scoreLabel = 'Excellent';
-      else if (avgScore >= 650) scoreLabel = 'Strong';
+      if (finalScore >= 750) scoreLabel = 'Excellent';
+      else if (finalScore >= 650) scoreLabel = 'Strong';
 
       // 3. Narrative Builder
       const netProfit = totalIncome - totalExpense;
@@ -459,7 +482,7 @@
         businessName: shopName,
         period: `${userDocuments.length} Documents Consolidated`,
         source: 'Aggregated Vault Records: ' + fileNamesList,
-        score: String(avgScore),
+        score: String(finalScore),
         scoreLabel: scoreLabel,
         income: allIncome.map(x => ({ label: x.label, amount: 'Rs ' + x.amount.toLocaleString('en-IN') })),
         incomeTotal: 'Rs ' + totalIncome.toLocaleString('en-IN'),
